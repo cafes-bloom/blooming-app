@@ -17,7 +17,6 @@
             --surface-card: #FAFAF7;
             --primary: #1E1410;
             --accent: #844C29;
-            --accent-hover: #6a3d21;
             --border: #E5E3D8;
             --text-main: #1A1613;
             --text-muted: #777777;
@@ -149,7 +148,7 @@
             letter-spacing: 0.5px; 
         }
 
-        /* Painel de Controlo Moderno (Filtros em Pílula + Ordenação) */
+        /* Painel de Controlo sem caixa de fundo (Clean) */
         .painel-controle { 
             display: flex; 
             flex-direction: column; 
@@ -163,10 +162,10 @@
             overflow-x: auto; 
             padding-bottom: 4px; 
             width: 100%; 
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none; 
         }
         .filtros-container::-webkit-scrollbar { 
-            display: none; /* Chrome/Safari */
+            display: none; 
         }
 
         .btn-filtro { 
@@ -207,7 +206,7 @@
             .filtros-container { width: auto; }
         }
 
-        /* Cartões de Pedido Redesenhados (Clean & Modern) */
+        /* Cartões de Pedido */
         .pedido-card { 
             background: var(--surface-card); 
             padding: 16px; 
@@ -219,6 +218,12 @@
             border-right: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
             transition: transform 0.2s;
+        }
+
+        /* Estilo visual para pedidos já entregues (opacidade reduzida/atenuada) */
+        .pedido-card.entregue {
+            opacity: 0.75;
+            border-left-color: #0369A1;
         }
 
         .pedido-header { 
@@ -250,7 +255,6 @@
             color: var(--primary);
         }
         
-        /* Badges de Status Modernos */
         .status-container { 
             display: flex; 
             flex-wrap: wrap; 
@@ -268,7 +272,6 @@
         .badge-nao { background-color: #FDF2F2; color: #9B2C2C; border: 1px solid #F5C6CB; }
         .badge-sim { background-color: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
 
-        /* Ações Compactas e Elegantes */
         .acoes-card { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -349,9 +352,9 @@
                 <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
             </div>
             <select id="ordenacao" class="ordenacao-select" onchange="mudarOrdenacao()">
+                <option value="entrega-asc">Entrega: Próximas (Padrão)</option>
                 <option value="criado-desc">Mais Recentes</option>
-                <option value="entrega-asc">Entrega Próxima</option>
-                <option value="entrega-desc">Entrega Distante</option>
+                <option value="entrega-desc">Entrega: Distantes</option>
             </select>
         </div>
 
@@ -414,7 +417,11 @@
 
         function desenharLista() {
             divLista.innerHTML = "";
+            
+            // FILTRO: Esconde automaticamente tudo o que já foi pago (arquivado)
             let pedidosProcessados = cachePedidos.filter(p => {
+                if (p.pago) return false; // Se foi pago, sai da tela ativa
+                
                 if (filtroAtual === 'producao-nao') return !p.produzido;
                 if (filtroAtual === 'entrega-nao') return !p.entregue;
                 if (filtroAtual === 'pago-nao') return !p.pago;
@@ -422,7 +429,14 @@
             });
             
             const criterioOrdem = document.getElementById("ordenacao").value;
+            
             pedidosProcessados.sort((a, b) => {
+                // REGRA DE OURO: O que já foi entregue desce automaticamente para o final da lista
+                if (a.entregue !== b.entregue) {
+                    return a.entregue ? 1 : -1; 
+                }
+
+                // ORDENAÇÃO SELECIONADA
                 if (criterioOrdem === 'criado-desc') { 
                     return new Date(b.criadoEm || 0) - new Date(a.criadoEm || 0); 
                 } else if (criterioOrdem === 'entrega-asc') { 
@@ -438,7 +452,7 @@
             });
 
             if (pedidosProcessados.length === 0) { 
-                divLista.innerHTML = "<p style='color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;'>Nenhum pedido encontrado.</p>"; 
+                divLista.innerHTML = "<p style='color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;'>Nenhum pedido pendente encontrado.</p>"; 
                 return; 
             }
 
@@ -448,8 +462,11 @@
                 const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entr: Sim</span>` : `<span class="badge badge-nao">Entr: Não</span>`;
                 const badgePag = p.pago ? `<span class="badge badge-sim">Pago: Sim</span>` : `<span class="badge badge-nao">Pago: Não</span>`;
                 
+                // Classe visual atenuada se já estiver entregue
+                const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
+                
                 divLista.innerHTML += `
-                    <div class="pedido-card">
+                    <div class="${classeEntregue}">
                         <div class="pedido-header">
                             <strong>${p.cliente}</strong>
                             <span class="data-pedido">${formatarData(p.dataPedido)}</span>
@@ -463,7 +480,7 @@
                         <div class="acoes-card">
                             <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
                             <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
-                            <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
+                            <button class="btn-acao btn-pagamento" onclick="confirmarPagamento('${id}', ${!p.pago})">💰 Pag</button>
                             <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑 Apagar</button>
                         </div>
                     </div>
@@ -519,6 +536,17 @@
             } catch (e) { 
                 console.error("Erro ao atualizar status: ", e); 
                 alert("Erro ao atualizar o estado do pedido."); 
+            }
+        }
+
+        // Confirmação de segurança antes de marcar como pago e arquivar
+        window.confirmarPagamento = async function(id, novoValor) {
+            if (novoValor) {
+                if (confirm("Confirma que este pedido foi pago? Ele será arquivado e sairá da tela ativa.")) {
+                    window.alternarStatus(id, 'pago', true);
+                }
+            } else {
+                window.alternarStatus(id, 'pago', false);
             }
         }
 
