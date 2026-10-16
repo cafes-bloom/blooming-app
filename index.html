@@ -329,20 +329,20 @@
             font-weight: 700;
         }
 
-        .btn-editar-data {
+        .btn-editar-item {
             background: #EFECE6;
             border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 4px 8px;
+            padding: 3px 7px;
             font-size: 11px;
             cursor: pointer;
-            margin-left: 8px;
+            margin-left: 6px;
             color: var(--primary);
             transition: background 0.2s;
             display: inline-flex;
             align-items: center;
         }
-        .btn-editar-data:hover {
+        .btn-editar-item:hover {
             background: #E5E3D8;
         }
         
@@ -398,6 +398,7 @@
             display: none; 
         }
 
+        /* Modal Overlay */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -413,7 +414,7 @@
             padding: 24px; 
             border-radius: 12px; 
             width: 90%; 
-            max-width: 320px;
+            max-width: 340px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
     </style>
@@ -482,7 +483,7 @@
         <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">A carregar pedidos...</p></div>
     </div>
 
-    <!-- Modal Flutuante para Edição Rápida da Data -->
+    <!-- Modal Flutuante para Edição da Data -->
     <div id="modalEditarData" class="modal-overlay">
         <div class="modal-content">
             <h3 style="margin-bottom: 16px;">Definir Data Oficial</h3>
@@ -491,6 +492,19 @@
             <div style="display: flex; gap: 10px;">
                 <button class="btn-salvar" onclick="salvarNovaData()" style="margin-top: 0; background-color: var(--accent);">Guardar</button>
                 <button class="btn-salvar" onclick="fecharModalData()" style="margin-top: 0; background-color: #9CA3AF;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Flutuante para Edição da Descrição -->
+    <div id="modalEditarDescricao" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 16px;">Editar Descrição</h3>
+            <label for="inputNovaDescricao">Descrição do Pedido:</label>
+            <textarea id="inputNovaDescricao" rows="3" style="margin-bottom: 16px; width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; margin-top: 4px;"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-salvar" onclick="salvarNovaDescricao()" style="margin-top: 0; background-color: var(--accent);">Guardar</button>
+                <button class="btn-salvar" onclick="fecharModalDescricao()" style="margin-top: 0; background-color: #9CA3AF;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -507,6 +521,7 @@
         const divLista = document.getElementById("listaPedidos");
         let cachePedidos = []; 
         let filtroAtual = 'todos';
+        let pedidoEditandoId = null;
 
         window.toggleFormulario = function() {
             const card = document.getElementById("formCard");
@@ -585,8 +600,7 @@
             desenharLista(); 
         }
 
-        let pedidoEditandoId = null;
-        
+        // --- Modal Edição de Data ---
         window.abrirModalData = function(id, dataAtual) {
             pedidoEditandoId = id;
             document.getElementById("inputNovaData").value = dataAtual;
@@ -618,18 +632,47 @@
             }
         }
 
+        // --- Modal Edição de Descrição ---
+        window.abrirModalDescricao = function(id) {
+            const p = cachePedidos.find(item => item.id === id);
+            if (!p) return;
+            pedidoEditandoId = id;
+            document.getElementById("inputNovaDescricao").value = p.descricao || "";
+            document.getElementById("modalEditarDescricao").style.display = "flex";
+        }
+
+        window.fecharModalDescricao = function() {
+            document.getElementById("modalEditarDescricao").style.display = "none";
+            pedidoEditandoId = null;
+        }
+
+        window.salvarNovaDescricao = async function() {
+            const novaDesc = document.getElementById("inputNovaDescricao").value.trim();
+            if (!novaDesc) {
+                alert("Por favor, preencha a descrição do pedido.");
+                return;
+            }
+            try {
+                const docRef = doc(db, "pedidos", pedidoEditandoId);
+                await updateDoc(docRef, { descricao: novaDesc });
+                fecharModalDescricao();
+                carregarPedidos();
+            } catch (e) {
+                console.error("Erro ao atualizar a descrição: ", e);
+                alert("Erro ao atualizar a descrição do pedido.");
+            }
+        }
+
         function desenharLista() {
             divLista.innerHTML = "";
             
             let pedidosProcessados = cachePedidos.filter(p => {
-                // O pedido só é considerado 'concluído/arquivado' quando Produzido, Entregue e Pago estão TRUE
                 const estaConcluido = p.produzido === true && p.entregue === true && p.pago === true;
 
                 if (filtroAtual === 'arquivados') {
                     return estaConcluido;
                 }
                 
-                // Na lista ativa, esconde apenas os 100% concluídos
                 if (estaConcluido) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
@@ -667,7 +710,7 @@
                     infoData = `<span style="color: #D97706; font-weight: 700;">Previsão: ${formatarData(p.dataEntrega)} ⏳ (A combinar)</span>`;
                 }
                 
-                infoData += ` <button class="btn-editar-data" onclick="abrirModalData('${id}', '${p.dataEntrega || ''}')" title="Alterar Data Oficial">✏️ Editar</button>`;
+                infoData += ` <button class="btn-editar-item" onclick="abrirModalData('${id}', '${p.dataEntrega || ''}')" title="Alterar Data Oficial">✏️ Editar</button>`;
 
                 divLista.innerHTML += `
                     <div class="${classeEntregue}">
@@ -676,7 +719,8 @@
                             <span class="data-pedido">${formatarData(p.dataPedido)}</span>
                         </div>
                         <div class="pedido-detalhes">
-                            <strong>Descrição:</strong> ${p.descricao} <br>
+                            <strong>Descrição:</strong> ${p.descricao} 
+                            <button class="btn-editar-item" onclick="abrirModalDescricao('${id}')" title="Editar Descrição">✏️ Editar</button> <br>
                             ${infoPreco}
                             <div style="margin-top: 6px;">${infoData}</div>
                         </div>
@@ -745,7 +789,6 @@
             const pedido = cachePedidos.find(p => p.id === id);
             if (!pedido) return;
 
-            // Simula o estado do pedido após a alteração pretendida
             const estadoFuturo = {
                 produzido: campo === 'produzido' ? novoValor : (pedido.produzido || false),
                 entregue: campo === 'entregue' ? novoValor : (pedido.entregue || false),
@@ -755,11 +798,10 @@
             const ficaraConcluido = estadoFuturo.produzido && estadoFuturo.entregue && estadoFuturo.pago;
             const jaEstavaConcluido = pedido.produzido && pedido.entregue && pedido.pago;
 
-            // Se esta ação for a responsável por fechar a 3ª etapa, pede confirmação
             if (ficaraConcluido && !jaEstavaConcluido) {
                 const confirmou = confirm("Todas as 3 etapas (Produção, Entrega e Pagamento) foram concluídas. Confirma que deseja arquivar este pedido?");
                 if (!confirmou) {
-                    return; // Cancela a operação e não altera o status
+                    return; 
                 }
             }
 
