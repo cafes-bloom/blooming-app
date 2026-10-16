@@ -15,20 +15,20 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #ECEADD; 
             color: #1A1613; 
-            padding: 10px; 
+            padding: 12px; 
             margin: 0; 
         }
         .container { 
             max-width: 900px; 
             margin: auto; 
             background: #FFFFFF; 
-            padding: 15px; 
+            padding: 20px; 
             border-radius: 16px; 
             box-shadow: 0 4px 20px rgba(30, 20, 16, 0.08); 
             border-top: 6px solid #844C29; 
         }
         
-        /* Cabeçalho Responsivo para Telas Estreitas e Largas */
+        /* Cabeçalho Responsivo */
         .cabecalho-fluido {
             display: flex;
             align-items: center;
@@ -40,7 +40,7 @@
             border-image: linear-gradient(to right, #844C29, #D9D8CF, transparent) 1;
         }
         .logo-topo img {
-            max-width: 80px;
+            max-width: 85px;
             height: auto;
             display: block;
         }
@@ -64,38 +64,34 @@
             font-weight: bold;
         }
 
-        /* Adaptação automática para telas muito estreitas (ex: capa do Fold) */
         @media (max-width: 420px) {
-            body { padding: 5px; }
-            .container { padding: 12px; }
             .cabecalho-fluido { flex-direction: column; text-align: center; }
             .titulo-topo { text-align: center; }
-            .titulo-topo h2 { font-size: 14px; }
-            .logo-topo img { max-width: 70px; margin: 0 auto; }
+            .titulo-topo h2 { font-size: 15px; }
+            .logo-topo img { max-width: 75px; margin: 0 auto; }
         }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .form-full { grid-column: span 2; }
         
-        /* Para telemóveis normais e verticais */
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; } 
             .form-full { grid-column: span 1; } 
         }
         
         label { font-size: 11px; font-weight: bold; color: #844C29; display: block; margin-top: 8px; text-transform: uppercase; }
-        input, select, textarea, button { width: 100%; padding: 10px 12px; margin-top: 4px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 8px; font-size: 14px; background-color: #FAFAF7; font-family: inherit; }
+        input, select, textarea, button { width: 100%; padding: 11px 12px; margin-top: 4px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 8px; font-size: 14px; background-color: #FAFAF7; font-family: inherit; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #844C29; background-color: #FFF; }
         
-        .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 20px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px; border-radius: 8px; transition: background 0.2s; }
+        .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 20px; text-transform: uppercase; letter-spacing: 0.5px; padding: 13px; border-radius: 8px; transition: background 0.2s; }
         .btn-salvar:active { background-color: #844C29; }
         
-        /* Painel de Controlos (Filtros e Ordenação) otimizado para toque */
+        /* Controlo de Filtros */
         .painel-controle { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .filtros-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; width: 100%; max-width: 100%; -webkit-overflow-scrolling: touch; }
-        .filtros-container::-webkit-scrollbar { display: none; } /* Ocultar scrollbar em mobile para aspeto limpo */
+        .filtros-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; width: 100%; -webkit-overflow-scrolling: touch; }
+        .filtros-container::-webkit-scrollbar { display: none; }
         
-        .btn-filtro { background-color: #E5E3D8; color: #1E1410; border: none; padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; }
+        .btn-filtro { background-color: #E5E3D8; color: #1E1410; border: none; padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; }
         .btn-filtro.ativo { background-color: #844C29; color: #FFFFFF; }
         
         .ordenacao-select { padding: 8px 12px; border-radius: 20px; background-color: #E5E3D8; color: #1E1410; border: none; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 5px; }
@@ -106,7 +102,7 @@
         }
         
         /* Cartões de Pedido */
-        .pedido-card { background: #FAFAF7; padding: 15px; margin-top: 15px; border-left: 6px solid #844C29; border-radius: 10px; box-shadow: 0 4px 12px rgba(30, 20, 16, 0.04); border-top: 1px solid #EFEEE9; border-right: 1px solid #EFEEE9; border-bottom: 1px solid #EFEEE9; }
+        .pedido-card { background: #FAFAF7; padding: 16px; margin-top: 15px; border-left: 6px solid #844C29; border-radius: 10px; box-shadow: 0 4px 12px rgba(30, 20, 16, 0.04); border-top: 1px solid #EFEEE9; border-right: 1px solid #EFEEE9; border-bottom: 1px solid #EFEEE9; }
         .pedido-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E3D8; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 5px; }
         .pedido-header strong { font-size: 16px; color: #1E1410; }
         .data-pedido { font-size: 12px; color: #777; }
@@ -117,17 +113,13 @@
         .badge-nao { background-color: #f8d7da; color: #721c24; }
         .badge-sim { background-color: #d4edda; color: #155724; }
         
-        /* Botões de Ação adaptados para toque sem quebrar em telas estreitas */
-        .acoes-card { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .btn-acao { padding: 8px 4px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; text-align: center; white-space: nowrap; }
+        /* Botões de Ação com tamanho proporcional e elegante */
+        .acoes-card { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-acao { padding: 8px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; flex-grow: 1; min-width: 75px; text-align: center; }
         .btn-producao { background: #ffc107; color: #000; }
         .btn-entrega { background: #17a2b8; color: #fff; }
         .btn-pagamento { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: #fff; }
-
-        @media (max-width: 380px) {
-            .acoes-card { grid-template-columns: repeat(2, 1fr); } /* Se o ecrã for minúsculo, divide em 2 linhas de 2 botões */
-        }
+        .btn-excluir { background: #dc3545; color: #fff; min-width: 45px; flex-grow: 0; }
         
         #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
         h3 { margin-top: 20px; font-size: 15px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -135,7 +127,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Cabeçalho Dinâmico -->
         <div class="cabecalho-fluido">
             <div class="logo-topo">
                 <img src="logo.png" alt="Blooming Logo">
@@ -285,7 +276,7 @@
                             <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
                             <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
                             <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
-                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑 Apagar</button>
+                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑</button>
                         </div>
                     </div>
                 `;
