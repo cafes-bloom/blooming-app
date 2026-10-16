@@ -41,7 +41,7 @@
             border-top: 5px solid var(--accent); 
         }
 
-        /* Topo Lado a Lado e Profissional */
+        /* Topo Lado a Lado e Profissional (Aumentado) */
         .header-app { 
             display: flex;
             align-items: center;
@@ -51,18 +51,25 @@
             border-bottom: 1px solid var(--border);
         }
         .header-app img { 
-            max-width: 80px; 
+            max-width: 120px; 
             height: auto; 
         }
         .header-app span {
-            font-size: 11px;
+            font-size: 14px; 
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent);
-            border-left: 1px solid var(--accent); /* Linha divisória elegante */
-            padding-left: 14px;
-            margin-left: 14px;
+            border-left: 2px solid var(--accent);
+            padding-left: 16px;
+            margin-left: 16px;
+        }
+
+        /* Container para os botões de ação do topo */
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         /* Botão para abrir o Card de Registo */
@@ -70,7 +77,7 @@
             background-color: var(--primary);
             color: var(--bg-base);
             border: none;
-            width: 100%;
+            flex: 1; /* Ocupa a maior parte do espaço */
             padding: 14px;
             border-radius: 10px;
             font-size: 13px;
@@ -83,11 +90,32 @@
             align-items: center;
             gap: 8px;
             transition: background 0.2s, transform 0.1s;
-            margin-bottom: 20px;
         }
         .btn-toggle-form:active {
             transform: scale(0.99);
             background-color: var(--accent);
+        }
+
+        /* Botão discreto para Arquivados */
+        .btn-arquivados {
+            background-color: #E5E3D8;
+            color: var(--primary);
+            border: none;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+        .btn-arquivados.ativo-arq {
+            background-color: var(--accent);
+            color: #FFFFFF;
         }
 
         /* Card de Registo Expansível */
@@ -97,7 +125,7 @@
             border-radius: 12px;
             padding: 18px;
             margin-bottom: 25px;
-            display: none; /* Fechado por padrão */
+            display: none;
             animation: fadeIn 0.25s ease-in-out;
         }
         .form-card-container.aberto {
@@ -174,7 +202,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 5px;
             margin-bottom: 12px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 8px;
@@ -268,6 +296,9 @@
             color: #332C27; 
             margin-bottom: 12px; 
             line-height: 1.5; 
+            /* Impede que o texto vaze da caixa */
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
         .pedido-detalhes strong {
             color: var(--primary);
@@ -328,16 +359,24 @@
 </head>
 <body>
     <div class="container">
-        <!-- Topo Sofisticado Lado a Lado -->
+        <!-- Topo Sofisticado Lado a Lado (Maior) -->
         <div class="header-app">
             <img src="logo.png" alt="Blooming Club Logo">
             <span>Gestão de Produção</span>
         </div>
         
-        <!-- Botão Retátil para Novo Pedido -->
-        <button class="btn-toggle-form" onclick="toggleFormulario()">
-            <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registar Novo Pedido</span>
-        </button>
+        <!-- Botões de Ação do Topo -->
+        <div class="header-actions">
+            <!-- Botão Retátil para Novo Pedido -->
+            <button class="btn-toggle-form" onclick="toggleFormulario()">
+                <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registar Novo Pedido</span>
+            </button>
+            
+            <!-- Botão Discreto para Arquivados -->
+            <button id="btnArquivados" class="btn-arquivados" onclick="toggleArquivados()" title="Ver pedidos finalizados">
+                📦 Arquivo
+            </button>
+        </div>
 
         <!-- Card de Registo Expansível -->
         <div id="formCard" class="form-card-container">
@@ -361,11 +400,11 @@
         </div>
         
         <div class="section-header">
-            <h3>Pedidos Ativos</h3>
+            <h3 id="tituloSecao">Pedidos Ativos</h3>
         </div>
         
         <!-- Filtros Rápidos (Pílulas) -->
-        <div class="painel-controle">
+        <div id="painelFiltros" class="painel-controle">
             <div class="filtros-container">
                 <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
                 <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
@@ -405,6 +444,34 @@
                 icone.innerText = "＋";
                 texto.innerText = "Registar Novo Pedido";
             }
+        }
+
+        // Controle do botão de Arquivados
+        window.toggleArquivados = function() {
+            const btn = document.getElementById("btnArquivados");
+            const titulo = document.getElementById("tituloSecao");
+            const painelFiltros = document.getElementById("painelFiltros");
+            
+            if (filtroAtual === 'arquivados') {
+                // Voltar para a visão normal
+                filtroAtual = 'todos';
+                btn.innerHTML = "📦 Arquivo";
+                btn.classList.remove('ativo-arq');
+                titulo.innerText = "Pedidos Ativos";
+                painelFiltros.style.display = "flex";
+                
+                // Reseta a marcação das pílulas para "Todos"
+                document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+                document.querySelector('.btn-filtro').classList.add('ativo');
+            } else {
+                // Mudar para a visão de arquivados
+                filtroAtual = 'arquivados';
+                btn.innerHTML = "← Voltar Ativos";
+                btn.classList.add('ativo-arq');
+                titulo.innerText = "Pedidos Arquivados (Pagos)";
+                painelFiltros.style.display = "none"; // Oculta as pílulas de filtro
+            }
+            desenharLista();
         }
 
         const textareaDescricao = document.getElementById("descricao");
@@ -447,8 +514,13 @@
         function desenharLista() {
             divLista.innerHTML = "";
             
-            // 1. FILTRO AUTOMÁTICO: O que já foi pago sai da tela (arquivado)
             let pedidosProcessados = cachePedidos.filter(p => {
+                // Se estivermos na visão de arquivados, mostra só os pagos
+                if (filtroAtual === 'arquivados') {
+                    return p.pago === true;
+                }
+                
+                // Filtros normais da tela ativa (esconde os pagos)
                 if (p.pago) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
@@ -457,21 +529,17 @@
                 return true;
             });
             
-            // 2. ORDENAÇÃO AUTOMÁTICA INTELIGENTE
             pedidosProcessados.sort((a, b) => {
-                // REGRA A: O que já foi entregue desce automaticamente para o final da lista
                 if (a.entregue !== b.entregue) {
                     return a.entregue ? 1 : -1; 
                 }
-
-                // REGRA B: Ordena automaticamente por Data de Entrega (mais próxima primeiro)
                 if (!a.dataEntrega) return 1; 
                 if (!b.dataEntrega) return -1; 
                 return new Date(a.dataEntrega) - new Date(b.dataEntrega);
             });
 
             if (pedidosProcessados.length === 0) { 
-                divLista.innerHTML = "<p style='color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;'>Nenhum pedido pendente encontrado.</p>"; 
+                divLista.innerHTML = "<p style='color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;'>Nenhum pedido encontrado nesta vista.</p>"; 
                 return; 
             }
 
@@ -529,18 +597,16 @@
                     criadoEm: new Date().toISOString() 
                 });
                 
-                // Limpa os campos
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
                 
-                // Feedback e fecho automático do card
                 const msg = document.getElementById("mensagem"); 
                 msg.style.display = "block"; 
                 setTimeout(() => {
                     msg.style.display = "none";
-                    toggleFormulario(); // Fecha o formulário automaticamente
+                    toggleFormulario(); 
                 }, 1200);
 
                 carregarPedidos();
