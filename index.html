@@ -41,24 +41,28 @@
             border-top: 5px solid var(--accent); 
         }
 
+        /* Topo Lado a Lado e Profissional */
         .header-app { 
-            text-align: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px; 
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
         }
         .header-app img { 
-            max-width: 95px; 
+            max-width: 80px; 
             height: auto; 
-            margin-bottom: 6px;
         }
         .header-app span {
-            display: block;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             color: var(--accent);
+            border-left: 1px solid var(--accent); /* Linha divisória elegante */
+            padding-left: 14px;
+            margin-left: 14px;
         }
 
         /* Botão para abrir o Card de Registo */
@@ -324,7 +328,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Topo Sofisticado -->
+        <!-- Topo Sofisticado Lado a Lado -->
         <div class="header-app">
             <img src="logo.png" alt="Blooming Club Logo">
             <span>Gestão de Produção</span>
