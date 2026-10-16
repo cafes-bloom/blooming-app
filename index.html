@@ -148,51 +148,19 @@
             letter-spacing: 0.5px; 
         }
 
-        /* Painel de Controlo sem caixa de fundo (Clean) */
+        /* Painel de Controlo apenas com Ordenação (Sem Filtros) */
         .painel-controle { 
             display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
+            justify-content: flex-end; 
             margin-bottom: 15px; 
         }
 
-        .filtros-container { 
-            display: flex; 
-            gap: 6px; 
-            overflow-x: auto; 
-            padding-bottom: 4px; 
-            width: 100%; 
-            scrollbar-width: none; 
-        }
-        .filtros-container::-webkit-scrollbar { 
-            display: none; 
-        }
-
-        .btn-filtro { 
-            background-color: #EFECE6; 
-            color: var(--primary); 
-            border: none; 
-            padding: 7px 12px; 
-            border-radius: 20px; 
-            font-size: 11px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            white-space: nowrap; 
-            text-transform: uppercase; 
-            transition: all 0.2s;
-        }
-        .btn-filtro.ativo { 
-            background-color: var(--accent); 
-            color: #FFFFFF; 
-            box-shadow: 0 2px 6px rgba(132, 76, 41, 0.25);
-        }
-
         .ordenacao-select { 
-            padding: 7px 12px; 
-            border-radius: 20px; 
+            padding: 9px 14px; 
+            border-radius: 8px; 
             background-color: #EFECE6; 
             color: var(--primary); 
-            border: none; 
+            border: 1px solid var(--border); 
             font-size: 11px; 
             font-weight: 700; 
             text-transform: uppercase; 
@@ -201,9 +169,7 @@
         }
 
         @media (min-width: 650px) {
-            .painel-controle { flex-direction: row; justify-content: space-between; align-items: center; }
             .ordenacao-select { width: auto; }
-            .filtros-container { width: auto; }
         }
 
         /* Cartões de Pedido */
@@ -220,7 +186,6 @@
             transition: transform 0.2s;
         }
 
-        /* Estilo visual para pedidos já entregues (opacidade reduzida/atenuada) */
         .pedido-card.entregue {
             opacity: 0.75;
             border-left-color: #0369A1;
@@ -345,12 +310,6 @@
         </div>
         
         <div class="painel-controle">
-            <div class="filtros-container">
-                <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
-                <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
-                <button class="btn-filtro" onclick="filtrar('entrega-nao', this)">Por Entregar</button>
-                <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
-            </div>
             <select id="ordenacao" class="ordenacao-select" onchange="mudarOrdenacao()">
                 <option value="entrega-asc">Entrega: Próximas (Padrão)</option>
                 <option value="criado-desc">Mais Recentes</option>
@@ -372,7 +331,6 @@
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
         let cachePedidos = []; 
-        let filtroAtual = 'todos';
 
         const textareaDescricao = document.getElementById("descricao");
         textareaDescricao.addEventListener("input", function() {
@@ -404,13 +362,6 @@
             }
         }
 
-        window.filtrar = function(tipo, elementoBotao) { 
-            filtroAtual = tipo; 
-            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('ativo')); 
-            elementoBotao.classList.add('ativo'); 
-            desenharLista(); 
-        }
-
         window.mudarOrdenacao = function() { 
             desenharLista(); 
         }
@@ -418,20 +369,13 @@
         function desenharLista() {
             divLista.innerHTML = "";
             
-            // FILTRO: Esconde automaticamente tudo o que já foi pago (arquivado)
-            let pedidosProcessados = cachePedidos.filter(p => {
-                if (p.pago) return false; // Se foi pago, sai da tela ativa
-                
-                if (filtroAtual === 'producao-nao') return !p.produzido;
-                if (filtroAtual === 'entrega-nao') return !p.entregue;
-                if (filtroAtual === 'pago-nao') return !p.pago;
-                return true;
-            });
+            // FILTRO AUTOMÁTICO: O que já foi pago sai da tela (arquivado)
+            let pedidosProcessados = cachePedidos.filter(p => !p.pago);
             
             const criterioOrdem = document.getElementById("ordenacao").value;
             
             pedidosProcessados.sort((a, b) => {
-                // REGRA DE OURO: O que já foi entregue desce automaticamente para o final da lista
+                // REGRA: O que já foi entregue desce automaticamente para o final da lista
                 if (a.entregue !== b.entregue) {
                     return a.entregue ? 1 : -1; 
                 }
@@ -462,7 +406,6 @@
                 const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entr: Sim</span>` : `<span class="badge badge-nao">Entr: Não</span>`;
                 const badgePag = p.pago ? `<span class="badge badge-sim">Pago: Sim</span>` : `<span class="badge badge-nao">Pago: Não</span>`;
                 
-                // Classe visual atenuada se já estiver entregue
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
                 divLista.innerHTML += `
@@ -539,7 +482,6 @@
             }
         }
 
-        // Confirmação de segurança antes de marcar como pago e arquivar
         window.confirmarPagamento = async function(id, novoValor) {
             if (novoValor) {
                 if (confirm("Confirma que este pedido foi pago? Ele será arquivado e sairá da tela ativa.")) {
