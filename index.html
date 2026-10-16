@@ -41,7 +41,7 @@
             border-top: 5px solid var(--accent); 
         }
 
-        /* Topo Lado a Lado e Profissional (Aumentado) */
+        /* Topo Lado a Lado */
         .header-app { 
             display: flex;
             align-items: center;
@@ -65,19 +65,17 @@
             margin-left: 16px;
         }
 
-        /* Container para os botões de ação do topo */
         .header-actions {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
 
-        /* Botão para abrir o Card de Registo */
         .btn-toggle-form {
             background-color: var(--primary);
             color: var(--bg-base);
             border: none;
-            flex: 1; /* Ocupa a maior parte do espaço */
+            flex: 1; 
             padding: 14px;
             border-radius: 10px;
             font-size: 13px;
@@ -96,7 +94,6 @@
             background-color: var(--accent);
         }
 
-        /* Botão discreto para Arquivados */
         .btn-arquivados {
             background-color: #E5E3D8;
             color: var(--primary);
@@ -118,7 +115,6 @@
             color: #FFFFFF;
         }
 
-        /* Card de Registo Expansível */
         .form-card-container {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -153,7 +149,7 @@
             letter-spacing: 0.5px;
         }
 
-        input, textarea { 
+        input[type="text"], input[type="date"], textarea { 
             width: 100%; 
             padding: 11px 14px; 
             margin-top: 4px; 
@@ -177,6 +173,32 @@
             resize: none;
             overflow: hidden;
             min-height: 44px;
+        }
+
+        /* Checkbox da Previsão */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            background: #F0EDE4;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            accent-color: var(--accent);
+            transform: scale(1.2);
+        }
+        .checkbox-container label {
+            margin: 0;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: 500;
+            cursor: pointer;
         }
 
         .btn-salvar { 
@@ -216,7 +238,6 @@
             letter-spacing: 0.8px; 
         }
 
-        /* Barra de Filtros limpa */
         .painel-controle { 
             display: flex; 
             margin-bottom: 15px; 
@@ -253,7 +274,6 @@
             box-shadow: 0 2px 6px rgba(132, 76, 41, 0.25);
         }
 
-        /* Cartões de Pedido */
         .pedido-card { 
             background: var(--surface-card); 
             padding: 16px; 
@@ -296,7 +316,6 @@
             color: #332C27; 
             margin-bottom: 12px; 
             line-height: 1.5; 
-            /* Impede que o texto vaze da caixa */
             overflow-wrap: break-word;
             word-break: break-word;
         }
@@ -359,26 +378,23 @@
 </head>
 <body>
     <div class="container">
-        <!-- Topo Sofisticado Lado a Lado (Maior) -->
+        <!-- Topo -->
         <div class="header-app">
             <img src="logo.png" alt="Blooming Club Logo">
             <span>Gestão de Produção</span>
         </div>
         
-        <!-- Botões de Ação do Topo -->
+        <!-- Botões -->
         <div class="header-actions">
-            <!-- Botão Retátil para Novo Pedido -->
             <button class="btn-toggle-form" onclick="toggleFormulario()">
                 <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registar Novo Pedido</span>
             </button>
-            
-            <!-- Botão Discreto para Arquivados -->
             <button id="btnArquivados" class="btn-arquivados" onclick="toggleArquivados()" title="Ver pedidos finalizados">
                 📦 Arquivo
             </button>
         </div>
 
-        <!-- Card de Registo Expansível -->
+        <!-- Formulário -->
         <div id="formCard" class="form-card-container">
             <div class="form-grid">
                 <div>
@@ -390,8 +406,13 @@
                     <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
                 </div>
                 <div>
-                    <label for="dataEntrega">Data de Entrega Prevista</label>
+                    <label for="dataEntrega">Data de Entrega</label>
                     <input type="date" id="dataEntrega">
+                    <!-- Checkbox de Previsão -->
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="previsaoData">
+                        <label for="previsaoData">Esta data é apenas uma previsão (A combinar)</label>
+                    </div>
                 </div>
             </div>
             
@@ -403,7 +424,7 @@
             <h3 id="tituloSecao">Pedidos Ativos</h3>
         </div>
         
-        <!-- Filtros Rápidos (Pílulas) -->
+        <!-- Filtros -->
         <div id="painelFiltros" class="painel-controle">
             <div class="filtros-container">
                 <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
@@ -429,7 +450,6 @@
         let cachePedidos = []; 
         let filtroAtual = 'todos';
 
-        // Controle de abertura/fecho do card de formulário
         window.toggleFormulario = function() {
             const card = document.getElementById("formCard");
             const icone = document.getElementById("iconeBotaoForm");
@@ -446,30 +466,26 @@
             }
         }
 
-        // Controle do botão de Arquivados
         window.toggleArquivados = function() {
             const btn = document.getElementById("btnArquivados");
             const titulo = document.getElementById("tituloSecao");
             const painelFiltros = document.getElementById("painelFiltros");
             
             if (filtroAtual === 'arquivados') {
-                // Voltar para a visão normal
                 filtroAtual = 'todos';
                 btn.innerHTML = "📦 Arquivo";
                 btn.classList.remove('ativo-arq');
                 titulo.innerText = "Pedidos Ativos";
                 painelFiltros.style.display = "flex";
                 
-                // Reseta a marcação das pílulas para "Todos"
                 document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
                 document.querySelector('.btn-filtro').classList.add('ativo');
             } else {
-                // Mudar para a visão de arquivados
                 filtroAtual = 'arquivados';
                 btn.innerHTML = "← Voltar Ativos";
                 btn.classList.add('ativo-arq');
                 titulo.innerText = "Pedidos Arquivados (Pagos)";
-                painelFiltros.style.display = "none"; // Oculta as pílulas de filtro
+                painelFiltros.style.display = "none"; 
             }
             desenharLista();
         }
@@ -515,12 +531,10 @@
             divLista.innerHTML = "";
             
             let pedidosProcessados = cachePedidos.filter(p => {
-                // Se estivermos na visão de arquivados, mostra só os pagos
                 if (filtroAtual === 'arquivados') {
                     return p.pago === true;
                 }
                 
-                // Filtros normais da tela ativa (esconde os pagos)
                 if (p.pago) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
@@ -551,6 +565,12 @@
                 
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
+                // Verifica se é uma data prevista e muda a forma como é exibido
+                let infoData = `<strong>Entrega:</strong> ${formatarData(p.dataEntrega)}`;
+                if (p.previsaoData) {
+                    infoData = `<span style="color: #D97706; font-weight: 700;">Previsão: ${formatarData(p.dataEntrega)} ⏳ (A combinar)</span>`;
+                }
+
                 divLista.innerHTML += `
                     <div class="${classeEntregue}">
                         <div class="pedido-header">
@@ -559,7 +579,7 @@
                         </div>
                         <div class="pedido-detalhes">
                             <strong>Descrição:</strong> ${p.descricao} <br>
-                            <strong>Entrega:</strong> ${formatarData(p.dataEntrega)}
+                            ${infoData}
                         </div>
                         <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
                         <div class="acoes-card">
@@ -577,6 +597,7 @@
             let cliente = document.getElementById("cliente").value;
             let descricao = document.getElementById("descricao").value;
             let dataEntrega = document.getElementById("dataEntrega").value;
+            let isPrevisao = document.getElementById("previsaoData").checked; // Pega o valor do Checkbox
             
             if(cliente === "" || descricao === "") { 
                 alert("Por favor, preencha o nome do cliente e a descrição do pedido!"); 
@@ -589,7 +610,8 @@
                     cliente: cliente, 
                     descricao: descricao, 
                     dataPedido: hoje, 
-                    dataEntrega: dataEntrega, 
+                    dataEntrega: dataEntrega,
+                    previsaoData: isPrevisao, // Salva no banco de dados
                     pagamentoForma: "Não informada", 
                     produzido: false, 
                     entregue: false, 
@@ -597,10 +619,12 @@
                     criadoEm: new Date().toISOString() 
                 });
                 
+                // Limpa os campos
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
+                document.getElementById("previsaoData").checked = false; // Reseta o checkbox
                 
                 const msg = document.getElementById("mensagem"); 
                 msg.style.display = "block"; 
