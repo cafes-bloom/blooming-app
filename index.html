@@ -137,7 +137,6 @@
         }
         .badge-nao { background-color: #f8d7da; color: #721c24; }
         .badge-sim { background-color: #d4edda; color: #155724; }
-        .badge-pagamento { background-color: #e2e3e5; color: #383d41; }
 
         .acoes-card {
             display: flex;
@@ -227,7 +226,6 @@
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
 
-        // Função para formatar data bonita (DD/MM/AAAA)
         function formatarData(dataISO) {
             if (!dataISO) return "Não definida";
             const partes = dataISO.split("-");
@@ -236,6 +234,9 @@
         }
 
         async function carregarPedidos() {
+            // Guarda a posição atual do scroll antes de atualizar a lista
+            const posicaoAtualScroll = window.scrollY;
+
             divLista.innerHTML = "<p style='color: #777; text-align: center;'>A carregar...</p>";
             
             try {
@@ -282,6 +283,10 @@
                         </div>
                     `;
                 });
+
+                // Restaura exatamente a posição onde o utilizador estava a olhar
+                window.scrollTo(0, posicaoAtualScroll);
+
             } catch (e) {
                 console.error("Erro ao carregar: ", e);
                 divLista.innerHTML = "<p style='color: red; text-align: center;'>Erro ao ligar à base de dados.</p>";
