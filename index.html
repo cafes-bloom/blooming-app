@@ -22,6 +22,14 @@
         label { font-size: 12px; font-weight: bold; color: #844C29; display: block; margin-top: 10px; text-transform: uppercase; }
         input, select, textarea, button { width: 100%; padding: 12px; margin-top: 5px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 6px; font-size: 15px; background-color: #FAFAF7; font-family: inherit; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #844C29; background-color: #FFF; }
+        
+        /* Ajuste específico para a textarea expandir de forma fluida */
+        textarea {
+            resize: none;
+            overflow: hidden;
+            min-height: 48px;
+        }
+
         .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px; border-radius: 6px; transition: background 0.2s; }
         .btn-salvar:active { background-color: #844C29; }
         .painel-controle { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
@@ -59,7 +67,7 @@
             </div>
             <div class="form-full">
                 <label for="descricao">Descrição do Pedido</label>
-                <textarea id="descricao" rows="2" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
+                <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
             </div>
             <div>
                 <label for="dataEntrega">Data de Entrega Prevista</label>
@@ -102,6 +110,14 @@
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
         let cachePedidos = []; let filtroAtual = 'todos';
+
+        // Auto-ajuste da altura da descrição conforme o texto
+        const textareaDescricao = document.getElementById("descricao");
+        textareaDescricao.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+
         function formatarData(dataISO) { if (!dataISO) return "Não definida"; const partes = dataISO.split("-"); if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`; return dataISO; }
         async function carregarPedidos() {
             const posicaoAtualScroll = window.scrollY;
@@ -161,7 +177,10 @@
             const hoje = new Date().toISOString().split('T')[0];
             try {
                 await addDoc(pedidosRef, { cliente: cliente, descricao: descricao, dataPedido: hoje, dataEntrega: dataEntrega, pagamentoForma: pagamentoForma, produzido: false, entregue: false, pago: false, criadoEm: new Date().toISOString() });
-                document.getElementById("cliente").value = ""; document.getElementById("descricao").value = ""; document.getElementById("dataEntrega").value = "";
+                document.getElementById("cliente").value = ""; 
+                document.getElementById("descricao").value = ""; 
+                document.getElementById("descricao").style.height = "auto"; // Reseta a altura ao salvar
+                document.getElementById("dataEntrega").value = "";
                 const msg = document.getElementById("mensagem"); msg.style.display = "block"; setTimeout(() => msg.style.display = "none", 3000);
                 carregarPedidos();
             } catch (e) { console.error("Erro ao guardar: ", e); alert("Erro ao guardar o pedido."); }
