@@ -315,7 +315,7 @@
         .pedido-detalhes { 
             font-size: 13px; 
             color: #332C27; 
-            margin-bottom: 12px; 
+            margin-bottom: 16px; 
             line-height: 1.5; 
             overflow-wrap: break-word;
             word-break: break-word;
@@ -345,48 +345,78 @@
         .btn-editar-item:hover {
             background: #E5E3D8;
         }
-        
-        .status-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 6px; 
-            margin-bottom: 14px; 
-        }
-        .badge { 
-            padding: 4px 10px; 
-            border-radius: 6px; 
-            font-size: 10px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-        }
-        .badge-nao { background-color: #FDF2F2; color: #9B2C2C; border: 1px solid #F5C6CB; }
-        .badge-sim { background-color: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
 
+        /* --- BOTÕES 3D: EFEITO VAZIO VS CHEIO --- */
         .acoes-card { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            gap: 6px; 
+            gap: 8px; 
         }
+        
         .btn-acao { 
-            padding: 8px 4px; 
+            padding: 10px 4px; 
             font-size: 11px; 
-            font-weight: 700; 
-            border: none; 
-            border-radius: 6px; 
+            font-weight: 800; 
+            border-radius: 8px; 
             cursor: pointer; 
             text-transform: uppercase; 
             text-align: center; 
-            transition: opacity 0.2s, transform 0.1s;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s;
+            position: relative;
+            margin-bottom: 4px; /* Espaço para a sombra 3D */
+            box-sizing: border-box;
         }
-        .btn-acao:active { transform: scale(0.96); }
-        .btn-producao { background: #FEF3C7; color: #92400E; }
-        .btn-entrega { background: #E0F2FE; color: #0369A1; }
-        .btn-pagamento { background: #DCFCE7; color: #166534; }
-        .btn-excluir { background: #FEE2E2; color: #991B1B; }
+
+        /* PRODUÇÃO */
+        .btn-prod.pendente { 
+            background: #FFFFFF; color: #B45309; border: 2px solid #FCD34D;
+            box-shadow: 0 4px 0 #FCD34D; 
+        }
+        .btn-prod.pendente:active {
+            box-shadow: 0 0 0 #FCD34D; transform: translateY(4px);
+        }
+        .btn-prod.concluido { 
+            background: #D97706; color: #FFFFFF; border: 2px solid #D97706;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
+        }
+
+        /* ENTREGA */
+        .btn-entr.pendente { 
+            background: #FFFFFF; color: #0369A1; border: 2px solid #BAE6FD;
+            box-shadow: 0 4px 0 #BAE6FD; 
+        }
+        .btn-entr.pendente:active {
+            box-shadow: 0 0 0 #BAE6FD; transform: translateY(4px);
+        }
+        .btn-entr.concluido { 
+            background: #0284C7; color: #FFFFFF; border: 2px solid #0284C7;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
+        }
+
+        /* PAGAMENTO */
+        .btn-pag.pendente { 
+            background: #FFFFFF; color: #15803D; border: 2px solid #BBF7D0;
+            box-shadow: 0 4px 0 #BBF7D0; 
+        }
+        .btn-pag.pendente:active {
+            box-shadow: 0 0 0 #BBF7D0; transform: translateY(4px);
+        }
+        .btn-pag.concluido { 
+            background: #16A34A; color: #FFFFFF; border: 2px solid #16A34A;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
+        }
+
+        /* EXCLUIR */
+        .btn-excluir { 
+            background: #FFFFFF; color: #B91C1C; border: 2px solid #FECACA;
+            box-shadow: 0 4px 0 #FECACA; 
+        }
+        .btn-excluir:active {
+            box-shadow: 0 0 0 #FECACA; transform: translateY(4px);
+        }
 
         @media (max-width: 400px) {
-            .acoes-card { grid-template-columns: repeat(2, 1fr); }
+            .acoes-card { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         }
 
         #mensagem { 
@@ -398,7 +428,6 @@
             display: none; 
         }
 
-        /* Modal Overlay */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -430,7 +459,7 @@
         <!-- Botões -->
         <div class="header-actions">
             <button class="btn-toggle-form" onclick="toggleFormulario()">
-                <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registar Novo Pedido</span>
+                <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registrar Novo Pedido</span>
             </button>
             <button id="btnArquivados" class="btn-arquivados" onclick="toggleArquivados()" title="Ver pedidos finalizados">
                 📦 Arquivo
@@ -462,8 +491,8 @@
                 </div>
             </div>
             
-            <button class="btn-salvar" onclick="salvarPedido()">Guardar Pedido</button>
-            <p id="mensagem">Pedido registado com sucesso!</p>
+            <button class="btn-salvar" onclick="salvarPedido()">Salvar Pedido</button>
+            <p id="mensagem">Pedido registrado com sucesso!</p>
         </div>
         
         <div class="section-header">
@@ -480,7 +509,7 @@
             </div>
         </div>
 
-        <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">A carregar pedidos...</p></div>
+        <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">Carregando pedidos...</p></div>
     </div>
 
     <!-- Modal Flutuante para Edição da Data -->
@@ -490,7 +519,7 @@
             <label for="inputNovaData">Nova Data de Entrega:</label>
             <input type="date" id="inputNovaData" style="margin-bottom: 16px;">
             <div style="display: flex; gap: 10px;">
-                <button class="btn-salvar" onclick="salvarNovaData()" style="margin-top: 0; background-color: var(--accent);">Guardar</button>
+                <button class="btn-salvar" onclick="salvarNovaData()" style="margin-top: 0; background-color: var(--accent);">Salvar</button>
                 <button class="btn-salvar" onclick="fecharModalData()" style="margin-top: 0; background-color: #9CA3AF;">Cancelar</button>
             </div>
         </div>
@@ -503,7 +532,7 @@
             <label for="inputNovaDescricao">Descrição do Pedido:</label>
             <textarea id="inputNovaDescricao" rows="3" style="margin-bottom: 16px; width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; margin-top: 4px;"></textarea>
             <div style="display: flex; gap: 10px;">
-                <button class="btn-salvar" onclick="salvarNovaDescricao()" style="margin-top: 0; background-color: var(--accent);">Guardar</button>
+                <button class="btn-salvar" onclick="salvarNovaDescricao()" style="margin-top: 0; background-color: var(--accent);">Salvar</button>
                 <button class="btn-salvar" onclick="fecharModalDescricao()" style="margin-top: 0; background-color: #9CA3AF;">Cancelar</button>
             </div>
         </div>
@@ -535,7 +564,7 @@
                 document.getElementById("cliente").focus();
             } else {
                 icone.innerText = "＋";
-                texto.innerText = "Registar Novo Pedido";
+                texto.innerText = "Registrar Novo Pedido";
             }
         }
 
@@ -600,7 +629,6 @@
             desenharLista(); 
         }
 
-        // --- Modal Edição de Data ---
         window.abrirModalData = function(id, dataAtual) {
             pedidoEditandoId = id;
             document.getElementById("inputNovaData").value = dataAtual;
@@ -632,7 +660,6 @@
             }
         }
 
-        // --- Modal Edição de Descrição ---
         window.abrirModalDescricao = function(id) {
             const p = cachePedidos.find(item => item.id === id);
             if (!p) return;
@@ -697,10 +724,16 @@
 
             pedidosProcessados.forEach((p) => {
                 const id = p.id;
-                const badgeProd = p.produzido ? `<span class="badge badge-sim">Prod: Sim</span>` : `<span class="badge badge-nao">Prod: Não</span>`;
-                const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entr: Sim</span>` : `<span class="badge badge-nao">Entr: Não</span>`;
-                const badgePag = p.pago ? `<span class="badge badge-sim">Pago: Sim</span>` : `<span class="badge badge-nao">Pago: Não</span>`;
                 
+                const classeProd = p.produzido ? "btn-acao btn-prod concluido" : "btn-acao btn-prod pendente";
+                const textoProd = p.produzido ? "✔ PROD" : "⚙ PROD";
+
+                const classeEntr = p.entregue ? "btn-acao btn-entr concluido" : "btn-acao btn-entr pendente";
+                const textoEntr = p.entregue ? "✔ ENTR" : "🚚 ENTR";
+
+                const classePag = p.pago ? "btn-acao btn-pag concluido" : "btn-acao btn-pag pendente";
+                const textoPag = p.pago ? "✔ PAGO" : "💰 PAG";
+
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
                 let infoPreco = p.preco ? `<strong>Valor:</strong> <span class="valor-destaque">${p.preco}</span> <br>` : '';
@@ -724,12 +757,12 @@
                             ${infoPreco}
                             <div style="margin-top: 6px;">${infoData}</div>
                         </div>
-                        <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
+                        
                         <div class="acoes-card">
-                            <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
-                            <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
-                            <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
-                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑 Apagar</button>
+                            <button class="${classeProd}" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">${textoProd}</button>
+                            <button class="${classeEntr}" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">${textoEntr}</button>
+                            <button class="${classePag}" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">${textoPag}</button>
+                            <button class="btn-acao btn-excluir" onclick="excluirPedido('${id}')">🗑 EXCLUIR</button>
                         </div>
                     </div>
                 `;
@@ -817,14 +850,14 @@
             }
         }
 
-        window.apagarPedido = async function(id) {
-            if(confirm("Tem a certeza que deseja apagar este registo?")) {
+        window.excluirPedido = async function(id) {
+            if(confirm("Tem certeza que deseja excluir este pedido?")) {
                 try { 
                     await deleteDoc(doc(db, "pedidos", id)); 
                     carregarPedidos(); 
                 } catch (e) { 
-                    console.error("Erro ao apagar: ", e); 
-                    alert("Erro ao remover o registo."); 
+                    console.error("Erro ao excluir: ", e); 
+                    alert("Erro ao remover o registro."); 
                 }
             }
         }
