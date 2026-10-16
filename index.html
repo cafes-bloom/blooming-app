@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blooming - Gestão de Pedidos e Produção</title>
+    <title>Blooming Club - Gestão de Pedidos e Produção</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -35,42 +35,80 @@
             max-width: 850px; 
             margin: auto; 
             background: var(--surface); 
-            padding: 20px; 
+            padding: 24px 20px; 
             border-radius: 16px; 
             box-shadow: 0 8px 30px rgba(30, 20, 16, 0.06); 
             border-top: 5px solid var(--accent); 
         }
 
-        .logo-topo { 
+        .header-app { 
             text-align: center; 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
         }
-        .logo-topo img { 
-            max-width: 120px; 
+        .header-app img { 
+            max-width: 95px; 
             height: auto; 
+            margin-bottom: 6px;
+        }
+        .header-app span {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
         }
 
-        h2 { 
-            text-align: center; 
-            color: var(--primary); 
-            font-size: 18px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            margin-bottom: 20px; 
+        /* Botão para abrir o Card de Registo */
+        .btn-toggle-form {
+            background-color: var(--primary);
+            color: var(--bg-base);
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+            margin-bottom: 20px;
+        }
+        .btn-toggle-form:active {
+            transform: scale(0.99);
+            background-color: var(--accent);
+        }
+
+        /* Card de Registo Expansível */
+        .form-card-container {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+            display: none; /* Fechado por padrão */
+            animation: fadeIn 0.25s ease-in-out;
+        }
+        .form-card-container.aberto {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-grid { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr; 
             gap: 12px; 
-        }
-        .form-full { 
-            grid-column: span 2; 
-        }
-
-        @media (max-width: 600px) { 
-            .form-grid { grid-template-columns: 1fr; } 
-            .form-full { grid-column: span 1; } 
         }
 
         label { 
@@ -78,12 +116,12 @@
             font-weight: 700; 
             color: var(--accent); 
             display: block; 
-            margin-top: 8px; 
+            margin-top: 6px; 
             text-transform: uppercase; 
             letter-spacing: 0.5px;
         }
 
-        input, select, textarea { 
+        input, textarea { 
             width: 100%; 
             padding: 11px 14px; 
             margin-top: 4px; 
@@ -91,16 +129,15 @@
             border: 1px solid var(--border); 
             border-radius: 8px; 
             font-size: 14px; 
-            background-color: var(--surface-card); 
+            background-color: #FFFFFF; 
             color: var(--text-main);
             font-family: inherit;
             transition: all 0.2s ease;
         }
 
-        input:focus, select:focus, textarea:focus { 
+        input:focus, textarea:focus { 
             outline: none; 
             border-color: var(--accent); 
-            background-color: #FFF; 
             box-shadow: 0 0 0 3px rgba(132, 76, 41, 0.1);
         }
 
@@ -111,30 +148,29 @@
         }
 
         .btn-salvar { 
-            background-color: var(--primary); 
-            color: var(--bg-base); 
+            background-color: var(--accent); 
+            color: #FFFFFF; 
             border: none; 
             cursor: pointer; 
             font-weight: 700; 
-            margin-top: 20px; 
+            margin-top: 16px; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
-            padding: 14px; 
+            padding: 13px; 
             border-radius: 8px; 
             width: 100%;
             font-size: 13px;
-            transition: background 0.2s, transform 0.1s; 
+            transition: background 0.2s; 
         }
-        .btn-salvar:active { 
-            background-color: var(--accent); 
-            transform: scale(0.99);
+        .btn-salvar:hover {
+            background-color: #6a3d21;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 25px;
+            margin-top: 15px;
             margin-bottom: 12px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 8px;
@@ -142,13 +178,13 @@
 
         h3 { 
             margin: 0; 
-            font-size: 14px; 
+            font-size: 13px; 
             color: var(--primary); 
             text-transform: uppercase; 
-            letter-spacing: 0.5px; 
+            letter-spacing: 0.8px; 
         }
 
-        /* Barra de Filtros limpa e sem caixa de fundo */
+        /* Barra de Filtros limpa */
         .painel-controle { 
             display: flex; 
             margin-bottom: 15px; 
@@ -280,46 +316,48 @@
             color: var(--accent); 
             font-weight: 700; 
             text-align: center; 
-            margin-top: 12px; 
-            font-size: 13px;
+            margin-top: 10px; 
+            font-size: 12px;
             display: none; 
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo-topo"><img src="logo.png" alt="Blooming Logo"></div>
-        <h2>Painel de Controlo e Produção</h2>
-        
-        <div class="form-grid">
-            <div class="form-full">
-                <label for="cliente">Nome do Cliente / Cafeteria</label>
-                <input type="text" id="cliente" placeholder="Ex: Café Central">
-            </div>
-            <div class="form-full">
-                <label for="descricao">Descrição do Pedido</label>
-                <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
-            </div>
-            <div>
-                <label for="dataEntrega">Data de Entrega Prevista</label>
-                <input type="date" id="dataEntrega">
-            </div>
-            <div>
-                <label for="pagamentoForma">Forma de Pagamento</label>
-                <select id="pagamentoForma">
-                    <option value="Pix">Pix</option>
-                    <option value="Boleto">Boleto</option>
-                    <option value="Cartão">Cartão</option>
-                    <option value="Faturado">Faturado</option>
-                </select>
-            </div>
+        <!-- Topo Sofisticado -->
+        <div class="header-app">
+            <img src="logo.png" alt="Blooming Club Logo">
+            <span>Gestão de Produção</span>
         </div>
         
-        <button class="btn-salvar" onclick="salvarPedido()">Registar Novo Pedido</button>
-        <p id="mensagem">Pedido registado com sucesso!</p>
+        <!-- Botão Retátil para Novo Pedido -->
+        <button class="btn-toggle-form" onclick="toggleFormulario()">
+            <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registar Novo Pedido</span>
+        </button>
+
+        <!-- Card de Registo Expansível -->
+        <div id="formCard" class="form-card-container">
+            <div class="form-grid">
+                <div>
+                    <label for="cliente">Nome do Cliente / Cafeteria</label>
+                    <input type="text" id="cliente" placeholder="Ex: Café Central">
+                </div>
+                <div>
+                    <label for="descricao">Descrição do Pedido</label>
+                    <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
+                </div>
+                <div>
+                    <label for="dataEntrega">Data de Entrega Prevista</label>
+                    <input type="date" id="dataEntrega">
+                </div>
+            </div>
+            
+            <button class="btn-salvar" onclick="salvarPedido()">Guardar Pedido</button>
+            <p id="mensagem">Pedido registado com sucesso!</p>
+        </div>
         
         <div class="section-header">
-            <h3>Lista de Pedidos Ativos</h3>
+            <h3>Pedidos Ativos</h3>
         </div>
         
         <!-- Filtros Rápidos (Pílulas) -->
@@ -347,6 +385,23 @@
         const divLista = document.getElementById("listaPedidos");
         let cachePedidos = []; 
         let filtroAtual = 'todos';
+
+        // Controle de abertura/fecho do card de formulário
+        window.toggleFormulario = function() {
+            const card = document.getElementById("formCard");
+            const icone = document.getElementById("iconeBotaoForm");
+            const texto = document.getElementById("textoBotaoForm");
+            
+            card.classList.toggle("aberto");
+            if(card.classList.contains("aberto")) {
+                icone.innerText = "✕";
+                texto.innerText = "Fechar Formulário";
+                document.getElementById("cliente").focus();
+            } else {
+                icone.innerText = "＋";
+                texto.innerText = "Registar Novo Pedido";
+            }
+        }
 
         const textareaDescricao = document.getElementById("descricao");
         textareaDescricao.addEventListener("input", function() {
@@ -432,8 +487,7 @@
                         </div>
                         <div class="pedido-detalhes">
                             <strong>Descrição:</strong> ${p.descricao} <br>
-                            <strong>Entrega:</strong> ${formatarData(p.dataEntrega)} <br>
-                            <strong>Pagamento:</strong> ${p.pagamentoForma}
+                            <strong>Entrega:</strong> ${formatarData(p.dataEntrega)}
                         </div>
                         <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
                         <div class="acoes-card">
@@ -451,7 +505,6 @@
             let cliente = document.getElementById("cliente").value;
             let descricao = document.getElementById("descricao").value;
             let dataEntrega = document.getElementById("dataEntrega").value;
-            let pagamentoForma = document.getElementById("pagamentoForma").value;
             
             if(cliente === "" || descricao === "") { 
                 alert("Por favor, preencha o nome do cliente e a descrição do pedido!"); 
@@ -465,19 +518,27 @@
                     descricao: descricao, 
                     dataPedido: hoje, 
                     dataEntrega: dataEntrega, 
-                    pagamentoForma: pagamentoForma, 
+                    pagamentoForma: "Não informada", 
                     produzido: false, 
                     entregue: false, 
                     pago: false, 
                     criadoEm: new Date().toISOString() 
                 });
+                
+                // Limpa os campos
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
+                
+                // Feedback e fecho automático do card
                 const msg = document.getElementById("mensagem"); 
                 msg.style.display = "block"; 
-                setTimeout(() => msg.style.display = "none", 3000);
+                setTimeout(() => {
+                    msg.style.display = "none";
+                    toggleFormulario(); // Fecha o formulário automaticamente
+                }, 1200);
+
                 carregarPedidos();
             } catch (e) { 
                 console.error("Erro ao guardar: ", e); 
