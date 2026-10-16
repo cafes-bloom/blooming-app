@@ -15,14 +15,14 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #ECEADD; 
             color: #1A1613; 
-            padding: 12px; 
+            padding: 10px; 
             margin: 0; 
         }
         .container { 
             max-width: 900px; 
             margin: auto; 
             background: #FFFFFF; 
-            padding: 20px; 
+            padding: 15px; 
             border-radius: 16px; 
             box-shadow: 0 4px 20px rgba(30, 20, 16, 0.08); 
             border-top: 6px solid #844C29; 
@@ -33,14 +33,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
             border-bottom: 2px solid transparent;
             border-image: linear-gradient(to right, #844C29, #D9D8CF, transparent) 1;
         }
         .logo-topo img {
-            max-width: 85px;
+            max-width: 75px;
             height: auto;
             display: block;
         }
@@ -49,14 +49,14 @@
         }
         .titulo-topo h2 {
             color: #1E1410;
-            font-size: 16px;
+            font-size: 15px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin: 0;
             line-height: 1.2;
         }
         .titulo-topo p {
-            font-size: 11px;
+            font-size: 10px;
             color: #844C29;
             margin: 2px 0 0 0;
             text-transform: uppercase;
@@ -64,14 +64,14 @@
             font-weight: bold;
         }
 
-        @media (max-width: 420px) {
+        @media (max-width: 400px) {
             .cabecalho-fluido { flex-direction: column; text-align: center; }
             .titulo-topo { text-align: center; }
-            .titulo-topo h2 { font-size: 15px; }
-            .logo-topo img { max-width: 75px; margin: 0 auto; }
+            .titulo-topo h2 { font-size: 14px; }
+            .logo-topo img { max-width: 65px; margin: 0 auto; }
         }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .form-full { grid-column: span 2; }
         
         @media (max-width: 768px) {
@@ -79,50 +79,87 @@
             .form-full { grid-column: span 1; } 
         }
         
-        label { font-size: 11px; font-weight: bold; color: #844C29; display: block; margin-top: 8px; text-transform: uppercase; }
-        input, select, textarea, button { width: 100%; padding: 11px 12px; margin-top: 4px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 8px; font-size: 14px; background-color: #FAFAF7; font-family: inherit; }
+        label { font-size: 11px; font-weight: bold; color: #844C29; display: block; margin-top: 6px; text-transform: uppercase; }
+        input, select, textarea, button { width: 100%; padding: 10px 12px; margin-top: 3px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 8px; font-size: 14px; background-color: #FAFAF7; font-family: inherit; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #844C29; background-color: #FFF; }
         
-        .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 20px; text-transform: uppercase; letter-spacing: 0.5px; padding: 13px; border-radius: 8px; transition: background 0.2s; }
+        .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px; border-radius: 8px; transition: background 0.2s; }
         .btn-salvar:active { background-color: #844C29; }
         
-        /* Controlo de Filtros */
-        .painel-controle { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .filtros-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; width: 100%; -webkit-overflow-scrolling: touch; }
+        /* Controlo de Filtros Alinhados e Compactos */
+        .painel-controle { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        
+        .filtros-container { 
+            display: flex; 
+            gap: 6px; 
+            overflow-x: auto; 
+            padding-bottom: 4px; 
+            width: 100%; 
+            -webkit-overflow-scrolling: touch; 
+        }
         .filtros-container::-webkit-scrollbar { display: none; }
         
-        .btn-filtro { background-color: #E5E3D8; color: #1E1410; border: none; padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; text-transform: uppercase; flex-shrink: 0; }
+        .btn-filtro { 
+            background-color: #E5E3D8; 
+            color: #1E1410; 
+            border: none; 
+            padding: 7px 12px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            text-transform: uppercase; 
+            flex-shrink: 0; 
+            width: auto !important; /* Impede que o botão estique */
+        }
         .btn-filtro.ativo { background-color: #844C29; color: #FFFFFF; }
         
-        .ordenacao-select { padding: 8px 12px; border-radius: 20px; background-color: #E5E3D8; color: #1E1410; border: none; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 5px; }
-        
+        .ordenacao-select { 
+            padding: 8px 12px; 
+            border-radius: 20px; 
+            background-color: #E5E3D8; 
+            color: #1E1410; 
+            border: none; 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            width: 100%; 
+        }
+
         @media (min-width: 600px) {
+            .painel-controle { flex-direction: row; justify-content: space-between; align-items: center; }
             .filtros-container { width: auto; flex: 1; }
-            .ordenacao-select { width: auto; margin-top: 0; }
+            .ordenacao-select { width: auto; }
         }
         
-        /* Cartões de Pedido */
-        .pedido-card { background: #FAFAF7; padding: 16px; margin-top: 15px; border-left: 6px solid #844C29; border-radius: 10px; box-shadow: 0 4px 12px rgba(30, 20, 16, 0.04); border-top: 1px solid #EFEEE9; border-right: 1px solid #EFEEE9; border-bottom: 1px solid #EFEEE9; }
-        .pedido-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E3D8; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 5px; }
-        .pedido-header strong { font-size: 16px; color: #1E1410; }
-        .data-pedido { font-size: 12px; color: #777; }
-        .pedido-detalhes { font-size: 14px; color: #333; margin-bottom: 12px; line-height: 1.4; }
+        /* Cartões de Pedido Compactos */
+        .pedido-card { background: #FAFAF7; padding: 14px; margin-top: 12px; border-left: 5px solid #844C29; border-radius: 10px; box-shadow: 0 2px 8px rgba(30, 20, 16, 0.04); border: 1px solid #EFEEE9; }
+        .pedido-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E3D8; padding-bottom: 6px; margin-bottom: 6px; }
+        .pedido-header strong { font-size: 15px; color: #1E1410; }
+        .data-pedido { font-size: 11px; color: #777; }
+        .pedido-detalhes { font-size: 13px; color: #333; margin-bottom: 10px; line-height: 1.35; }
         
-        .status-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .status-container { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .badge { padding: 3px 7px; border-radius: 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .badge-nao { background-color: #f8d7da; color: #721c24; }
         .badge-sim { background-color: #d4edda; color: #155724; }
         
-        /* Botões de Ação com tamanho proporcional e elegante */
-        .acoes-card { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn-acao { padding: 8px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; flex-grow: 1; min-width: 75px; text-align: center; }
+        /* Botões de Ação em Grelha Uniforme e Elegante */
+        .acoes-card { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .btn-acao { padding: 7px 2px; font-size: 11px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; text-align: center; white-space: nowrap; width: 100% !important; }
         .btn-producao { background: #ffc107; color: #000; }
         .btn-entrega { background: #17a2b8; color: #fff; }
         .btn-pagamento { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: #fff; min-width: 45px; flex-grow: 0; }
+        .btn-excluir { background: #dc3545; color: #fff; }
+
+        @media (max-width: 380px) {
+            .acoes-card { grid-template-columns: repeat(2, 1fr); } /* Em ecrãs super estreitos, divide em 2x2 */
+        }
         
-        #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
-        h3 { margin-top: 20px; font-size: 15px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
+        #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 10px; display: none; }
+        h3 { margin-top: 18px; font-size: 14px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
