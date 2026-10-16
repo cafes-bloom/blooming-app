@@ -44,6 +44,19 @@
             border-top: 5px solid var(--accent); 
         }
 
+        /* --- CABEÇALHO FIXO (STICKY) --- */
+        .sticky-header {
+            position: sticky;
+            top: -12px; /* Compensa o padding de 12px do body */
+            background-color: var(--surface);
+            z-index: 100;
+            margin: -24px -20px 15px -20px; /* Expande até as bordas do container */
+            padding: 24px 20px 12px 20px;
+            border-radius: 16px 16px 0 0;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 6px 12px rgba(30, 20, 16, 0.04); /* Sombra para profundidade */
+        }
+
         .header-app { 
             display: flex;
             align-items: center;
@@ -122,7 +135,7 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 18px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             display: none;
             animation: fadeIn 0.25s ease-in-out;
         }
@@ -225,10 +238,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 5px;
+            margin-top: 0px;
             margin-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
         }
 
         h3 { 
@@ -241,7 +252,7 @@
 
         .painel-controle { 
             display: flex; 
-            margin-bottom: 15px; 
+            margin-bottom: 0px; 
         }
 
         .filtros-container { 
@@ -278,7 +289,7 @@
         .pedido-card { 
             background: var(--surface-card); 
             padding: 16px; 
-            margin-top: 12px; 
+            margin-bottom: 12px; 
             border-left: 4px solid var(--accent); 
             border-radius: 12px; 
             box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
@@ -346,7 +357,7 @@
             background: #E5E3D8;
         }
 
-        /* --- BOTÕES 3D: EFEITO VAZIO VS CHEIO --- */
+        /* --- BOTÕES 3D --- */
         .acoes-card { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -363,11 +374,10 @@
             text-align: center; 
             transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s;
             position: relative;
-            margin-bottom: 4px; /* Espaço para a sombra 3D */
+            margin-bottom: 4px; 
             box-sizing: border-box;
         }
 
-        /* PRODUÇÃO */
         .btn-prod.pendente { 
             background: #FFFFFF; color: #B45309; border: 2px solid #FCD34D;
             box-shadow: 0 4px 0 #FCD34D; 
@@ -380,7 +390,6 @@
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
         }
 
-        /* ENTREGA */
         .btn-entr.pendente { 
             background: #FFFFFF; color: #0369A1; border: 2px solid #BAE6FD;
             box-shadow: 0 4px 0 #BAE6FD; 
@@ -393,7 +402,6 @@
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
         }
 
-        /* PAGAMENTO */
         .btn-pag.pendente { 
             background: #FFFFFF; color: #15803D; border: 2px solid #BBF7D0;
             box-shadow: 0 4px 0 #BBF7D0; 
@@ -406,7 +414,6 @@
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.2); transform: translateY(4px);
         }
 
-        /* EXCLUIR */
         .btn-excluir { 
             background: #FFFFFF; color: #B91C1C; border: 2px solid #FECACA;
             box-shadow: 0 4px 0 #FECACA; 
@@ -450,65 +457,71 @@
 </head>
 <body>
     <div class="container">
-        <!-- Topo -->
-        <div class="header-app">
-            <img src="logo.png" alt="Blooming Club Logo">
-            <span>Gestão de Produção</span>
-        </div>
         
-        <!-- Botões -->
-        <div class="header-actions">
-            <button class="btn-toggle-form" onclick="toggleFormulario()">
-                <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registrar Novo Pedido</span>
-            </button>
-            <button id="btnArquivados" class="btn-arquivados" onclick="toggleArquivados()" title="Ver pedidos finalizados">
-                📦 Arquivo
-            </button>
-        </div>
-
-        <!-- Formulário -->
-        <div id="formCard" class="form-card-container">
-            <div class="form-grid">
-                <div>
-                    <label for="cliente">Nome do Cliente / Cafeteria</label>
-                    <input type="text" id="cliente" placeholder="Ex: Café Central">
-                </div>
-                <div>
-                    <label for="descricao">Descrição do Pedido</label>
-                    <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
-                </div>
-                <div>
-                    <label for="preco">Valor do Pedido (Opcional)</label>
-                    <input type="text" id="preco" placeholder="Ex: 150,00">
-                </div>
-                <div>
-                    <label for="dataEntrega">Data de Entrega</label>
-                    <input type="date" id="dataEntrega">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="previsaoData">
-                        <label for="previsaoData">Esta data é apenas uma previsão (A combinar)</label>
-                    </div>
-                </div>
+        <!-- === INÍCIO DO CABEÇALHO FIXO === -->
+        <div class="sticky-header">
+            <!-- Topo -->
+            <div class="header-app">
+                <img src="logo.png" alt="Blooming Club Logo">
+                <span>Gestão de Produção</span>
             </div>
             
-            <button class="btn-salvar" onclick="salvarPedido()">Salvar Pedido</button>
-            <p id="mensagem">Pedido registrado com sucesso!</p>
-        </div>
-        
-        <div class="section-header">
-            <h3 id="tituloSecao">Pedidos Ativos</h3>
-        </div>
-        
-        <!-- Filtros -->
-        <div id="painelFiltros" class="painel-controle">
-            <div class="filtros-container">
-                <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
-                <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
-                <button class="btn-filtro" onclick="filtrar('entrega-nao', this)">Por Entregar</button>
-                <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
+            <!-- Botões -->
+            <div class="header-actions">
+                <button class="btn-toggle-form" onclick="toggleFormulario()">
+                    <span id="iconeBotaoForm">＋</span> <span id="textoBotaoForm">Registrar Novo Pedido</span>
+                </button>
+                <button id="btnArquivados" class="btn-arquivados" onclick="toggleArquivados()" title="Ver pedidos finalizados">
+                    📦 Arquivo
+                </button>
+            </div>
+
+            <!-- Formulário (Expande dentro da área fixa) -->
+            <div id="formCard" class="form-card-container">
+                <div class="form-grid">
+                    <div>
+                        <label for="cliente">Nome do Cliente / Cafeteria</label>
+                        <input type="text" id="cliente" placeholder="Ex: Café Central">
+                    </div>
+                    <div>
+                        <label for="descricao">Descrição do Pedido</label>
+                        <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
+                    </div>
+                    <div>
+                        <label for="preco">Valor do Pedido (Opcional)</label>
+                        <input type="text" id="preco" placeholder="Ex: 150,00">
+                    </div>
+                    <div>
+                        <label for="dataEntrega">Data de Entrega</label>
+                        <input type="date" id="dataEntrega">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="previsaoData">
+                            <label for="previsaoData">Esta data é apenas uma previsão (A combinar)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-salvar" onclick="salvarPedido()">Salvar Pedido</button>
+                <p id="mensagem">Pedido registrado com sucesso!</p>
+            </div>
+            
+            <div class="section-header">
+                <h3 id="tituloSecao">Pedidos Ativos</h3>
+            </div>
+            
+            <!-- Filtros -->
+            <div id="painelFiltros" class="painel-controle">
+                <div class="filtros-container">
+                    <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
+                    <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
+                    <button class="btn-filtro" onclick="filtrar('entrega-nao', this)">Por Entregar</button>
+                    <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
+                </div>
             </div>
         </div>
+        <!-- === FIM DO CABEÇALHO FIXO === -->
 
+        <!-- Lista que rola por baixo do cabeçalho -->
         <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">Carregando pedidos...</p></div>
     </div>
 
