@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blooming - Controlo de Produção</title>
     
-    <!-- Configurações para PWA / Ecrã Inteiro -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1E1410"> 
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* Padrão Visual Blooming (Inspirado na identidade de cafés especiais) */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #ECEADD; 
@@ -29,13 +27,13 @@
             box-shadow: 0 4px 15px rgba(30, 20, 16, 0.08); 
             border-top: 5px solid #844C29;
         }
-        h2 { 
-            text-align: center; 
-            color: #1E1410; 
-            font-size: 20px; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
+        .logo-topo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .logo-topo img {
+            max-width: 140px; /* Tamanho elegante para a logo */
+            height: auto;
         }
         label {
             font-size: 13px;
@@ -107,7 +105,10 @@
 </head>
 <body>
     <div class="container">
-        <h2>🌸 Blooming — Controlo de Produção</h2>
+        <!-- Logo carregada do GitHub -->
+        <div class="logo-topo">
+            <img src="logo.png" alt="Blooming Logo">
+        </div>
         
         <label for="cliente">Cliente / Cafeteria</label>
         <input type="text" id="cliente" placeholder="Ex: Café Central">
@@ -192,6 +193,7 @@
                     data: new Date().toISOString()
                 });
                 
+                document.getElementById("cliente", produto).value = "";
                 document.getElementById("cliente").value = "";
                 document.getElementById("produto").value = "";
                 
