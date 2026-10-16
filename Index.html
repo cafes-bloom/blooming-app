@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blooming - Controlo de Produção</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 15px; margin: 0; }
+        .container { max-width: 100%; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; font-size: 22px; }
+        input, button { width: 100%; padding: 14px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        button { background-color: #D97A96; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        button:active { background-color: #c0637d; }
+        .pedido { background: #fdfdfd; padding: 15px; margin-top: 15px; border-left: 5px solid #D97A96; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 4px; }
+        .pedido strong { font-size: 18px; color: #333; }
+        .pedido span { color: #666; margin-top: 5px; margin-bottom: 10px; font-size: 15px; }
+        .btn-concluir { background: #28a745; margin-top: 5px; padding: 10px; font-size: 14px; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-concluir:active { background: #218838; }
+        #mensagem { color: #28a745; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
+        h3 { margin-top: 25px; border-bottom: 2px solid #eee; padding-bottom: 5px; font-size: 18px; color: #444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌸 Blooming - Novo Pedido</h2>
+        
+        <input type="text" id="cliente" placeholder="Nome do Cliente (Ex: Maria Silva)">
+        <input type="text" id="produto" placeholder="Produto (Ex: 50 Caixas Drip Coffee)">
+        <button onclick="salvarPedido()">Guardar Pedido</button>
+        <p id="mensagem">Pedido guardado com sucesso!</p>
+
+        <h3>Pedidos em Produção:</h3>
+        <div id="listaPedidos">
+            <p style="color: #888; text-align: center;">A carregar pedidos...</p>
+        </div>
+    </div>
+
+    <!-- Motores do Firebase e a sua chave -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        // A SUA CHAVE EXATA ESTÁ AQUI
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzDOvbshvUu5T4QD0OJMuYU26lhNffaW8",
+            authDomain: "blooming-app-6a7da.firebaseapp.com",
+            projectId: "blooming-app-6a7da",
+            storageBucket: "blooming-app-6a7da.firebasestorage.app",
+            messagingSenderId: "452997966646",
+            appId: "1:452997966646:web:4bbf180e015b87aa9ee197",
+            measurementId: "G-RCSVS5G0EP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const pedidosRef = collection(db, "pedidos");
+        const divLista = document.getElementById("listaPedidos");
+
+        // Função para LER os pedidos
+        async function carregarPedidos() {
+            divLista.innerHTML = "<p style='color: #888; text-align: center;'>A carregar...</p>";
+            
+            try {
+                const q = query(pedidosRef, orderBy("data", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                divLista.innerHTML = ""; 
+
+                if (querySnapshot.empty) {
+                    divLista.innerHTML = "<p style='color: #888; text-align: center;'>Nenhum pedido em produção no momento.</p>";
+                    return;
+                }
+
+                querySnapshot.forEach((documento) => {
+                    const dados = documento.data();
+                    const id = documento.id;
+                    
+                    divLista.innerHTML += `
+                        <div class="pedido" id="pedido-${id}">
+                            <strong>${dados.cliente}</strong>
+                            <span>${dados.produto}</span>
+                            <button class="btn-concluir" onclick="concluirPedido('${id}')">✔ Concluir Pedido</button>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                console.error("Erro ao carregar: ", e);
+                divLista.innerHTML = "<p style='color: red; text-align: center;'>Erro ao ligar à base de dados.</p>";
+            }
+        }
+
+        // Função para GUARDAR
+        window.salvarPedido = async function() {
+            let cliente = document.getElementById("cliente").value;
+            let produto = document.getElementById("produto").value;
+
+            if(cliente === "" || produto === "") {
+                alert("Por favor, preencha o cliente e o produto!");
+                return;
+            }
+
+            try {
+                await addDoc(pedidosRef, {
+                    cliente: cliente,
+                    produto: produto,
+                    data: new Date().toISOString()
+                });
+                
+                document.getElementById("cliente").value = "";
+                document.getElementById("produto").value = "";
+                
+                const msg = document.getElementById("mensagem");
+                msg.style.display = "block";
+                setTimeout(() => msg.style.display = "none", 3000);
+
+                carregarPedidos();
+
+            } catch (e) {
+                console.error("Erro ao guardar: ", e);
+                alert("Erro ao guardar o pedido. Verifique o console.");
+            }
+        }
+
+        // Função para CONCLUIR (apagar)
+        window.concluirPedido = async function(id) {
+            if(confirm("Tem a certeza que quer concluir e remover este pedido?")) {
+                try {
+                    await deleteDoc(doc(db, "pedidos", id));
+                    carregarPedidos();
+                } catch (e) {
+                    console.error("Erro ao concluir: ", e);
+                    alert("Erro ao remover o pedido.");
+                }
+            }
+        }
+
+        // Carrega os pedidos ao abrir a aplicação
+        carregarPedidos();
+    </script>
+</body>
+</html>
