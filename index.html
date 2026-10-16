@@ -94,11 +94,18 @@
         }
         .btn-salvar:active { background-color: #844C29; }
         
-        /* Filtros Rápidos */
+        /* Controlo de Filtros e Ordenação */
+        .painel-controle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 25px;
+        }
         .filtros-container {
             display: flex;
-            gap: 8px;
-            margin-top: 25px;
+            gap: 6px;
             overflow-x: auto;
             padding-bottom: 5px;
         }
@@ -117,6 +124,19 @@
         .btn-filtro.ativo {
             background-color: #844C29;
             color: #FFFFFF;
+        }
+        .ordenacao-select {
+            padding: 8px 12px;
+            border-radius: 20px;
+            background-color: #E5E3D8;
+            color: #1E1410;
+            border: none;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: auto;
+            margin-top: 0;
         }
 
         /* Lista de Pedidos */
@@ -181,242 +201,4 @@
         .btn-producao { background: #ffc107; color: #000; }
         .btn-entrega { background: #17a2b8; color: #fff; }
         .btn-pagamento { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: #fff; max-width: 100px; }
-
-        #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
-        h3 { margin-top: 25px; font-size: 16px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo-topo">
-            <img src="logo.png" alt="Blooming Logo">
-        </div>
-        
-        <h2>Painel de Controlo e Produção</h2>
-        
-        <div class="form-grid">
-            <div class="form-full">
-                <label for="cliente">Nome do Cliente / Cafeteria</label>
-                <input type="text" id="cliente" placeholder="Ex: Café Central">
-            </div>
-            
-            <div class="form-full">
-                <label for="descricao">Descrição do Pedido</label>
-                <textarea id="descricao" rows="2" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
-            </div>
-            
-            <div>
-                <label for="dataEntrega">Data de Entrega Prevista</label>
-                <input type="date" id="dataEntrega">
-            </div>
-            
-            <div>
-                <label for="pagamentoForma">Forma de Pagamento</label>
-                <select id="pagamentoForma">
-                    <option value="Pix">Pix</option>
-                    <option value="Boleto">Boleto</option>
-                    <option value="Cartão">Cartão</option>
-                    <option value="Faturado">Faturado</option>
-                </select>
-            </div>
-        </div>
-        
-        <button class="btn-salvar" onclick="salvarPedido()">Registar Novo Pedido</button>
-        <p id="mensagem">Pedido registado com sucesso!</p>
-
-        <h3>Lista de Pedidos Ativos:</h3>
-        
-        <!-- Barra de Filtros Rápidos -->
-        <div class="filtros-container">
-            <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
-            <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
-            <button class="btn-filtro" onclick="filtrar('entrega-nao', this)">Por Entregar</button>
-            <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
-        </div>
-
-        <div id="listaPedidos">
-            <p style="color: #777; text-align: center; margin-top: 20px;">A carregar pedidos...</p>
-        </div>
-    </div>
-
-    <!-- Motores do Firebase e Lógica -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDzDOvbshvUu5T4QD0OJMuYU26lhNffaW8",
-            authDomain: "blooming-app-6a7da.firebaseapp.com",
-            projectId: "blooming-app-6a7da",
-            storageBucket: "blooming-app-6a7da.firebasestorage.app",
-            messagingSenderId: "452997966646",
-            appId: "1:452997966646:web:4bbf180e015b87aa9ee197",
-            measurementId: "G-RCSVS5G0EP"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const pedidosRef = collection(db, "pedidos");
-        const divLista = document.getElementById("listaPedidos");
-
-        let cachePedidos = [];
-        let filtroAtual = 'todos';
-
-        function formatarData(dataISO) {
-            if (!dataISO) return "Não definida";
-            const partes = dataISO.split("-");
-            if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
-            return dataISO;
-        }
-
-        async function carregarPedidos() {
-            const posicaoAtualScroll = window.scrollY;
-            
-            try {
-                const q = query(pedidosRef, orderBy("criadoEm", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                cachePedidos = [];
-                querySnapshot.forEach((documento) => {
-                    cachePedidos.push({ id: documento.id, ...documento.data() });
-                });
-                
-                desenharLista();
-                window.scrollTo(0, posicaoAtualScroll);
-
-            } catch (e) {
-                console.error("Erro ao carregar: ", e);
-                divLista.innerHTML = "<p style='color: red; text-align: center;'>Erro ao ligar à base de dados.</p>";
-            }
-        }
-
-        window.filtrar = function(tipo, elementoBotao) {
-            filtroAtual = tipo;
-            
-            // Remove a classe 'ativo' de todos os botões e coloca no clicado
-            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('ativo'));
-            elementoBotao.classList.add('ativo');
-
-            desenharLista();
-        }
-
-        function desenharLista() {
-            divLista.innerHTML = "";
-
-            let pedidosFiltrados = cachePedidos.filter(p => {
-                if (filtroAtual === 'producao-nao') return !p.produzido;
-                if (filtroAtual === 'entrega-nao') return !p.entregue;
-                if (filtroAtual === 'pago-nao') return !p.pago;
-                return true; // 'todos'
-            });
-
-            if (pedidosFiltrados.length === 0) {
-                divLista.innerHTML = "<p style='color: #777; text-align: center; margin-top: 20px;'>Nenhum pedido encontrado com este filtro.</p>";
-                return;
-            }
-
-            pedidosFiltrados.forEach((p) => {
-                const id = p.id;
-                const badgeProd = p.produzido ? `<span class="badge badge-sim">Produzido: Sim</span>` : `<span class="badge badge-nao">Produzido: Não</span>`;
-                const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entregue: Sim</span>` : `<span class="badge badge-nao">Entregue: Não</span>`;
-                const badgePag = p.pago ? `<span class="badge badge-sim">Pago: Sim</span>` : `<span class="badge badge-nao">Pago: Não</span>`;
-                
-                divLista.innerHTML += `
-                    <div class="pedido-card">
-                        <div class="pedido-header">
-                            <strong>${p.cliente}</strong>
-                            <span class="data-pedido">Pedido em: ${formatarData(p.dataPedido)}</span>
-                        </div>
-                        <div class="pedido-detalhes">
-                            <strong>Descrição:</strong> ${p.descricao} <br>
-                            <strong>Entrega Prevista:</strong> ${formatarData(p.dataEntrega)} <br>
-                            <strong>Forma de Pagamento:</strong> ${p.pagamentoForma}
-                        </div>
-                        <div class="status-container">
-                            ${badgeProd}
-                            ${badgeEnt}
-                            ${badgePag}
-                        </div>
-                        <div class="acoes-card">
-                            <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
-                            <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
-                            <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
-                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑</button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        window.salvarPedido = async function() {
-            let cliente = document.getElementById("cliente").value;
-            let descricao = document.getElementById("descricao").value;
-            let dataEntrega = document.getElementById("dataEntrega").value;
-            let pagamentoForma = document.getElementById("pagamentoForma").value;
-
-            if(cliente === "" || descricao === "") {
-                alert("Por favor, preencha o nome do cliente e a descrição do pedido!");
-                return;
-            }
-
-            const hoje = new Date().toISOString().split('T')[0];
-
-            try {
-                await addDoc(pedidosRef, {
-                    cliente: cliente,
-                    descricao: descricao,
-                    dataPedido: hoje,
-                    dataEntrega: dataEntrega,
-                    pagamentoForma: pagamentoForma,
-                    produzido: false,
-                    entregue: false,
-                    pago: false,
-                    criadoEm: new Date().toISOString()
-                });
-                
-                document.getElementById("cliente").value = "";
-                document.getElementById("descricao").value = "";
-                document.getElementById("dataEntrega").value = "";
-                
-                const msg = document.getElementById("mensagem");
-                msg.style.display = "block";
-                setTimeout(() => msg.style.display = "none", 3000);
-
-                carregarPedidos();
-
-            } catch (e) {
-                console.error("Erro ao guardar: ", e);
-                alert("Erro ao guardar o pedido.");
-            }
-        }
-
-        window.alternarStatus = async function(id, campo, novoValor) {
-            try {
-                const docRef = doc(db, "pedidos", id);
-                let dadosAtualizados = {};
-                dadosAtualizados[campo] = novoValor;
-                await updateDoc(docRef, dadosAtualizados);
-                carregarPedidos();
-            } catch (e) {
-                console.error("Erro ao atualizar status: ", e);
-                alert("Erro ao atualizar o estado do pedido.");
-            }
-        }
-
-        window.apagarPedido = async function(id) {
-            if(confirm("Tem a certeza que deseja apagar este registo?")) {
-                try {
-                    await deleteDoc(doc(db, "pedidos", id));
-                    carregarPedidos();
-                } catch (e) {
-                    console.error("Erro ao apagar: ", e);
-                    alert("Erro ao remover o registo.");
-                }
-            }
-        }
-
-        carregarPedidos();
-    </script>
-</body>
-</html>
+        .btn-excluir { background: #dc3545
