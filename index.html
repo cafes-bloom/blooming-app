@@ -32,58 +32,24 @@
         .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px; border-radius: 6px; transition: background 0.2s; }
         .btn-salvar:active { background-color: #844C29; }
         
-        /* Painel de Controlos Compacto e Elegante */
-        .painel-controle { 
-            background: #FAFAF7; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: 1px solid #E5E3D8; 
-            margin-top: 25px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-        }
+        .painel-controle { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+        .filtros-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; }
+        .btn-filtro { background-color: #E5E3D8; color: #1E1410; border: none; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
+        .btn-filtro.ativo { background-color: #844C29; color: #FFFFFF; }
         
-        .filtros-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 6px; 
-            width: 100%; 
-        }
-        
-        .btn-filtro { 
+        /* Ajuste do select de ordenação para ficar uniforme e limpo */
+        .ordenacao-select { 
+            padding: 8px 14px; 
+            border-radius: 20px; 
             background-color: #E5E3D8; 
             color: #1E1410; 
             border: none; 
-            padding: 8px 14px; 
-            border-radius: 6px; 
-            font-size: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            width: auto; /* Tamanho natural ajustado ao texto */
-        }
-        .btn-filtro.ativo { 
-            background-color: #844C29; 
-            color: #FFFFFF; 
-        }
-        
-        .ordenacao-select { 
-            padding: 9px 12px; 
-            border-radius: 6px; 
-            background-color: #FFFFFF; 
-            color: #1E1410; 
-            border: 1px solid #D9D8CF; 
             font-size: 12px; 
             font-weight: bold; 
             text-transform: uppercase; 
             cursor: pointer; 
             width: auto; 
             margin-top: 0; 
-        }
-
-        @media (min-width: 600px) {
-            .painel-controle { flex-direction: row; justify-content: space-between; align-items: center; }
         }
 
         .pedido-card { background: #FAFAF7; padding: 20px; margin-top: 15px; border-left: 5px solid #844C29; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid #EFEEE9; }
@@ -134,9 +100,7 @@
         </div>
         <button class="btn-salvar" onclick="salvarPedido()">Registar Novo Pedido</button>
         <p id="mensagem">Pedido registado com sucesso!</p>
-        
         <h3>Lista de Pedidos Ativos:</h3>
-        
         <div class="painel-controle">
             <div class="filtros-container">
                 <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
@@ -146,14 +110,12 @@
             </div>
             <select id="ordenacao" class="ordenacao-select" onchange="mudarOrdenacao()">
                 <option value="criado-desc">Mais Recentes</option>
-                <option value="entrega-asc">Entrega Próxima</option>
-                <option value="entrega-desc">Entrega Distante</option>
+                <option value="entrega-asc">Entrega: Próximas</option>
+                <option value="entrega-desc">Entrega: Distantes</option>
             </select>
         </div>
-
         <div id="listaPedidos"><p style="color: #777; text-align: center; margin-top: 20px;">A carregar pedidos...</p></div>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
