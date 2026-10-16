@@ -11,70 +11,305 @@
     <link rel="manifest" href="manifest.json">
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ECEADD; color: #1A1613; padding: 15px; margin: 0; }
-        .container { max-width: 900px; margin: auto; background: #FFFFFF; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(30, 20, 16, 0.08); border-top: 5px solid #844C29; }
-        .logo-topo { text-align: center; margin-bottom: 20px; }
-        .logo-topo img { max-width: 140px; height: auto; }
-        h2 { text-align: center; color: #1E1410; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-full { grid-column: span 2; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-full { grid-column: span 1; } }
-        label { font-size: 12px; font-weight: bold; color: #844C29; display: block; margin-top: 10px; text-transform: uppercase; }
-        input, select, textarea, button { width: 100%; padding: 12px; margin-top: 5px; box-sizing: border-box; border: 1px solid #D9D8CF; border-radius: 6px; font-size: 15px; background-color: #FAFAF7; font-family: inherit; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #844C29; background-color: #FFF; }
-        
+        :root {
+            --bg-base: #ECEADD;
+            --surface: #FFFFFF;
+            --surface-card: #FAFAF7;
+            --primary: #1E1410;
+            --accent: #844C29;
+            --accent-hover: #6a3d21;
+            --border: #E5E3D8;
+            --text-main: #1A1613;
+            --text-muted: #777777;
+        }
+
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            padding: 12px; 
+            margin: 0; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { 
+            max-width: 850px; 
+            margin: auto; 
+            background: var(--surface); 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 30px rgba(30, 20, 16, 0.06); 
+            border-top: 5px solid var(--accent); 
+        }
+
+        .logo-topo { 
+            text-align: center; 
+            margin-bottom: 15px; 
+        }
+        .logo-topo img { 
+            max-width: 120px; 
+            height: auto; 
+        }
+
+        h2 { 
+            text-align: center; 
+            color: var(--primary); 
+            font-size: 18px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-bottom: 20px; 
+        }
+
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+        .form-full { 
+            grid-column: span 2; 
+        }
+
+        @media (max-width: 600px) { 
+            .form-grid { grid-template-columns: 1fr; } 
+            .form-full { grid-column: span 1; } 
+        }
+
+        label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: var(--accent); 
+            display: block; 
+            margin-top: 8px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 11px 14px; 
+            margin-top: 4px; 
+            box-sizing: border-box; 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            font-size: 14px; 
+            background-color: var(--surface-card); 
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus { 
+            outline: none; 
+            border-color: var(--accent); 
+            background-color: #FFF; 
+            box-shadow: 0 0 0 3px rgba(132, 76, 41, 0.1);
+        }
+
         textarea {
             resize: none;
             overflow: hidden;
-            min-height: 48px;
+            min-height: 44px;
         }
 
-        .btn-salvar { background-color: #1E1410; color: #ECEADD; border: none; cursor: pointer; font-weight: bold; margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px; border-radius: 6px; transition: background 0.2s; }
-        .btn-salvar:active { background-color: #844C29; }
-        
-        .painel-controle { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
-        .filtros-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; }
-        .btn-filtro { background-color: #E5E3D8; color: #1E1410; border: none; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
-        .btn-filtro.ativo { background-color: #844C29; color: #FFFFFF; }
-        
-        /* Ajuste do select de ordenação para ficar uniforme e limpo */
-        .ordenacao-select { 
-            padding: 8px 14px; 
-            border-radius: 20px; 
-            background-color: #E5E3D8; 
-            color: #1E1410; 
+        .btn-salvar { 
+            background-color: var(--primary); 
+            color: var(--bg-base); 
             border: none; 
-            font-size: 12px; 
-            font-weight: bold; 
+            cursor: pointer; 
+            font-weight: 700; 
+            margin-top: 20px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            padding: 14px; 
+            border-radius: 8px; 
+            width: 100%;
+            font-size: 13px;
+            transition: background 0.2s, transform 0.1s; 
+        }
+        .btn-salvar:active { 
+            background-color: var(--accent); 
+            transform: scale(0.99);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        h3 { 
+            margin: 0; 
+            font-size: 14px; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+
+        /* Painel de Controlo Moderno (Filtros em Pílula + Ordenação) */
+        .painel-controle { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+
+        .filtros-container { 
+            display: flex; 
+            gap: 6px; 
+            overflow-x: auto; 
+            padding-bottom: 4px; 
+            width: 100%; 
+            scrollbar-width: none; /* Firefox */
+        }
+        .filtros-container::-webkit-scrollbar { 
+            display: none; /* Chrome/Safari */
+        }
+
+        .btn-filtro { 
+            background-color: #EFECE6; 
+            color: var(--primary); 
+            border: none; 
+            padding: 7px 12px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            text-transform: uppercase; 
+            transition: all 0.2s;
+        }
+        .btn-filtro.ativo { 
+            background-color: var(--accent); 
+            color: #FFFFFF; 
+            box-shadow: 0 2px 6px rgba(132, 76, 41, 0.25);
+        }
+
+        .ordenacao-select { 
+            padding: 7px 12px; 
+            border-radius: 20px; 
+            background-color: #EFECE6; 
+            color: var(--primary); 
+            border: none; 
+            font-size: 11px; 
+            font-weight: 700; 
             text-transform: uppercase; 
             cursor: pointer; 
-            width: auto; 
-            margin-top: 0; 
+            width: 100%; 
         }
 
-        .pedido-card { background: #FAFAF7; padding: 20px; margin-top: 15px; border-left: 5px solid #844C29; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid #EFEEE9; }
-        .pedido-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E5E3D8; padding-bottom: 10px; margin-bottom: 10px; }
-        .pedido-header strong { font-size: 18px; color: #1E1410; }
-        .data-pedido { font-size: 13px; color: #777; }
-        .pedido-detalhes { font-size: 15px; color: #333; margin-bottom: 15px; }
-        .status-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-        .badge-nao { background-color: #f8d7da; color: #721c24; }
-        .badge-sim { background-color: #d4edda; color: #155724; }
-        .acoes-card { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-acao { flex: 1; padding: 8px; font-size: 13px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
-        .btn-producao { background: #ffc107; color: #000; }
-        .btn-entrega { background: #17a2b8; color: #fff; }
-        .btn-pagamento { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: #fff; max-width: 100px; }
-        #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
-        h3 { margin-top: 25px; font-size: 16px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
+        @media (min-width: 650px) {
+            .painel-controle { flex-direction: row; justify-content: space-between; align-items: center; }
+            .ordenacao-select { width: auto; }
+            .filtros-container { width: auto; }
+        }
+
+        /* Cartões de Pedido Redesenhados (Clean & Modern) */
+        .pedido-card { 
+            background: var(--surface-card); 
+            padding: 16px; 
+            margin-top: 12px; 
+            border-left: 4px solid var(--accent); 
+            border-radius: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .pedido-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 8px; 
+            margin-bottom: 10px; 
+        }
+        .pedido-header strong { 
+            font-size: 16px; 
+            color: var(--primary); 
+            letter-spacing: 0.3px;
+        }
+        .data-pedido { 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 500;
+        }
+        
+        .pedido-detalhes { 
+            font-size: 13px; 
+            color: #332C27; 
+            margin-bottom: 12px; 
+            line-height: 1.5; 
+        }
+        .pedido-detalhes strong {
+            color: var(--primary);
+        }
+        
+        /* Badges de Status Modernos */
+        .status-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 6px; 
+            margin-bottom: 14px; 
+        }
+        .badge { 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        .badge-nao { background-color: #FDF2F2; color: #9B2C2C; border: 1px solid #F5C6CB; }
+        .badge-sim { background-color: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+
+        /* Ações Compactas e Elegantes */
+        .acoes-card { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+        }
+        .btn-acao { 
+            padding: 8px 4px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            text-align: center; 
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-acao:active { transform: scale(0.96); }
+        .btn-producao { background: #FEF3C7; color: #92400E; }
+        .btn-entrega { background: #E0F2FE; color: #0369A1; }
+        .btn-pagamento { background: #DCFCE7; color: #166534; }
+        .btn-excluir { background: #FEE2E2; color: #991B1B; }
+
+        @media (max-width: 400px) {
+            .acoes-card { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        #mensagem { 
+            color: var(--accent); 
+            font-weight: 700; 
+            text-align: center; 
+            margin-top: 12px; 
+            font-size: 13px;
+            display: none; 
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo-topo"><img src="logo.png" alt="Blooming Logo"></div>
         <h2>Painel de Controlo e Produção</h2>
+        
         <div class="form-grid">
             <div class="form-full">
                 <label for="cliente">Nome do Cliente / Cafeteria</label>
@@ -98,9 +333,14 @@
                 </select>
             </div>
         </div>
+        
         <button class="btn-salvar" onclick="salvarPedido()">Registar Novo Pedido</button>
         <p id="mensagem">Pedido registado com sucesso!</p>
-        <h3>Lista de Pedidos Ativos:</h3>
+        
+        <div class="section-header">
+            <h3>Lista de Pedidos Ativos</h3>
+        </div>
+        
         <div class="painel-controle">
             <div class="filtros-container">
                 <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
@@ -110,21 +350,26 @@
             </div>
             <select id="ordenacao" class="ordenacao-select" onchange="mudarOrdenacao()">
                 <option value="criado-desc">Mais Recentes</option>
-                <option value="entrega-asc">Entrega: Próximas</option>
-                <option value="entrega-desc">Entrega: Distantes</option>
+                <option value="entrega-asc">Entrega Próxima</option>
+                <option value="entrega-desc">Entrega Distante</option>
             </select>
         </div>
-        <div id="listaPedidos"><p style="color: #777; text-align: center; margin-top: 20px;">A carregar pedidos...</p></div>
+
+        <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">A carregar pedidos...</p></div>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+        
         const firebaseConfig = { apiKey: "AIzaSyDzDOvbshvUu5T4QD0OJMuYU26lhNffaW8", authDomain: "blooming-app-6a7da.firebaseapp.com", projectId: "blooming-app-6a7da", storageBucket: "blooming-app-6a7da.firebasestorage.app", messagingSenderId: "452997966646", appId: "1:452997966646:web:4bbf180e015b87aa9ee197", measurementId: "G-RCSVS5G0EP" };
+        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
-        let cachePedidos = []; let filtroAtual = 'todos';
+        let cachePedidos = []; 
+        let filtroAtual = 'todos';
 
         const textareaDescricao = document.getElementById("descricao");
         textareaDescricao.addEventListener("input", function() {
@@ -132,20 +377,41 @@
             this.style.height = (this.scrollHeight) + "px";
         });
 
-        function formatarData(dataISO) { if (!dataISO) return "Não definida"; const partes = dataISO.split("-"); if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`; return dataISO; }
+        function formatarData(dataISO) { 
+            if (!dataISO) return "Não definida"; 
+            const partes = dataISO.split("-"); 
+            if(partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`; 
+            return dataISO; 
+        }
+
         async function carregarPedidos() {
             const posicaoAtualScroll = window.scrollY;
             try {
                 const q = query(pedidosRef, orderBy("criadoEm", "desc"));
                 const querySnapshot = await getDocs(q);
                 cachePedidos = [];
-                querySnapshot.forEach((documento) => { cachePedidos.push({ id: documento.id, ...documento.data() }); });
+                querySnapshot.forEach((documento) => { 
+                    cachePedidos.push({ id: documento.id, ...documento.data() }); 
+                });
                 desenharLista();
                 window.scrollTo(0, posicaoAtualScroll);
-            } catch (e) { console.error("Erro ao carregar: ", e); divLista.innerHTML = "<p style='color: red; text-align: center;'>Erro ao ligar à base de dados.</p>"; }
+            } catch (e) { 
+                console.error("Erro ao carregar: ", e); 
+                divLista.innerHTML = "<p style='color: #991B1B; text-align: center;'>Erro ao ligar à base de dados.</p>"; 
+            }
         }
-        window.filtrar = function(tipo, elementoBotao) { filtroAtual = tipo; document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('ativo')); elementoBotao.classList.add('ativo'); desenharLista(); }
-        window.mudarOrdenacao = function() { desenharLista(); }
+
+        window.filtrar = function(tipo, elementoBotao) { 
+            filtroAtual = tipo; 
+            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('ativo')); 
+            elementoBotao.classList.add('ativo'); 
+            desenharLista(); 
+        }
+
+        window.mudarOrdenacao = function() { 
+            desenharLista(); 
+        }
+
         function desenharLista() {
             divLista.innerHTML = "";
             let pedidosProcessados = cachePedidos.filter(p => {
@@ -154,61 +420,120 @@
                 if (filtroAtual === 'pago-nao') return !p.pago;
                 return true;
             });
+            
             const criterioOrdem = document.getElementById("ordenacao").value;
             pedidosProcessados.sort((a, b) => {
-                if (criterioOrdem === 'criado-desc') { return new Date(b.criadoEm || 0) - new Date(a.criadoEm || 0); }
-                else if (criterioOrdem === 'entrega-asc') { if (!a.dataEntrega) return 1; if (!b.dataEntrega) return -1; return new Date(a.dataEntrega) - new Date(b.dataEntrega); }
-                else if (criterioOrdem === 'entrega-desc') { if (!a.dataEntrega) return 1; if (!b.dataEntrega) return -1; return new Date(b.dataEntrega) - new Date(a.dataEntrega); }
+                if (criterioOrdem === 'criado-desc') { 
+                    return new Date(b.criadoEm || 0) - new Date(a.criadoEm || 0); 
+                } else if (criterioOrdem === 'entrega-asc') { 
+                    if (!a.dataEntrega) return 1; 
+                    if (!b.dataEntrega) return -1; 
+                    return new Date(a.dataEntrega) - new Date(b.dataEntrega); 
+                } else if (criterioOrdem === 'entrega-desc') { 
+                    if (!a.dataEntrega) return 1; 
+                    if (!b.dataEntrega) return -1; 
+                    return new Date(b.dataEntrega) - new Date(a.dataEntrega); 
+                }
                 return 0;
             });
-            if (pedidosProcessados.length === 0) { divLista.innerHTML = "<p style='color: #777; text-align: center; margin-top: 20px;'>Nenhum pedido encontrado com estes critérios.</p>"; return; }
+
+            if (pedidosProcessados.length === 0) { 
+                divLista.innerHTML = "<p style='color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;'>Nenhum pedido encontrado.</p>"; 
+                return; 
+            }
+
             pedidosProcessados.forEach((p) => {
                 const id = p.id;
-                const badgeProd = p.produzido ? `<span class="badge badge-sim">Produzido: Sim</span>` : `<span class="badge badge-nao">Produzido: Não</span>`;
-                const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entregue: Sim</span>` : `<span class="badge badge-nao">Entregue: Não</span>`;
+                const badgeProd = p.produzido ? `<span class="badge badge-sim">Prod: Sim</span>` : `<span class="badge badge-nao">Prod: Não</span>`;
+                const badgeEnt = p.entregue ? `<span class="badge badge-sim">Entr: Sim</span>` : `<span class="badge badge-nao">Entr: Não</span>`;
                 const badgePag = p.pago ? `<span class="badge badge-sim">Pago: Sim</span>` : `<span class="badge badge-nao">Pago: Não</span>`;
+                
                 divLista.innerHTML += `
                     <div class="pedido-card">
-                        <div class="pedido-header"><strong>${p.cliente}</strong><span class="data-pedido">Pedido em: ${formatarData(p.dataPedido)}</span></div>
-                        <div class="pedido-detalhes"><strong>Descrição:</strong> ${p.descricao} <br><strong>Entrega Prevista:</strong> ${formatarData(p.dataEntrega)} <br><strong>Forma de Pagamento:</strong> ${p.pagamentoForma}</div>
+                        <div class="pedido-header">
+                            <strong>${p.cliente}</strong>
+                            <span class="data-pedido">${formatarData(p.dataPedido)}</span>
+                        </div>
+                        <div class="pedido-detalhes">
+                            <strong>Descrição:</strong> ${p.descricao} <br>
+                            <strong>Entrega:</strong> ${formatarData(p.dataEntrega)} <br>
+                            <strong>Pagamento:</strong> ${p.pagamentoForma}
+                        </div>
                         <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
                         <div class="acoes-card">
                             <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
                             <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
                             <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
-                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑</button>
+                            <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑 Apagar</button>
                         </div>
                     </div>
                 `;
             });
         }
+
         window.salvarPedido = async function() {
             let cliente = document.getElementById("cliente").value;
             let descricao = document.getElementById("descricao").value;
             let dataEntrega = document.getElementById("dataEntrega").value;
             let pagamentoForma = document.getElementById("pagamentoForma").value;
-            if(cliente === "" || descricao === "") { alert("Por favor, preencha o nome do cliente e a descrição do pedido!"); return; }
+            
+            if(cliente === "" || descricao === "") { 
+                alert("Por favor, preencha o nome do cliente e a descrição do pedido!"); 
+                return; 
+            }
+            
             const hoje = new Date().toISOString().split('T')[0];
             try {
-                await addDoc(pedidosRef, { cliente: cliente, descricao: descricao, dataPedido: hoje, dataEntrega: dataEntrega, pagamentoForma: pagamentoForma, produzido: false, entregue: false, pago: false, criadoEm: new Date().toISOString() });
+                await addDoc(pedidosRef, { 
+                    cliente: cliente, 
+                    descricao: descricao, 
+                    dataPedido: hoje, 
+                    dataEntrega: dataEntrega, 
+                    pagamentoForma: pagamentoForma, 
+                    produzido: false, 
+                    entregue: false, 
+                    pago: false, 
+                    criadoEm: new Date().toISOString() 
+                });
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
-                const msg = document.getElementById("mensagem"); msg.style.display = "block"; setTimeout(() => msg.style.display = "none", 3000);
+                const msg = document.getElementById("mensagem"); 
+                msg.style.display = "block"; 
+                setTimeout(() => msg.style.display = "none", 3000);
                 carregarPedidos();
-            } catch (e) { console.error("Erro ao guardar: ", e); alert("Erro ao guardar o pedido."); }
-        }
-        window.alternarStatus = async function(id, campo, novoValor) {
-            try { const docRef = doc(db, "pedidos", id); let dadosAtualizados = {}; dadosAtualizados[campo] = novoValor; await updateDoc(docRef, dadosAtualizados); carregarPedidos(); }
-            catch (e) { console.error("Erro ao atualizar status: ", e); alert("Erro ao atualizar o estado do pedido."); }
-        }
-        window.apagarPedido = async function(id) {
-            if(confirm("Tem a certeza que deseja apagar este registo?")) {
-                try { await deleteDoc(doc(db, "pedidos", id)); carregarPedidos(); }
-                catch (e) { console.error("Erro ao apagar: ", e); alert("Erro ao remover o registo."); }
+            } catch (e) { 
+                console.error("Erro ao guardar: ", e); 
+                alert("Erro ao guardar o pedido."); 
             }
         }
+
+        window.alternarStatus = async function(id, campo, novoValor) {
+            try { 
+                const docRef = doc(db, "pedidos", id); 
+                let dadosAtualizados = {}; 
+                dadosAtualizados[campo] = novoValor; 
+                await updateDoc(docRef, dadosAtualizados); 
+                carregarPedidos(); 
+            } catch (e) { 
+                console.error("Erro ao atualizar status: ", e); 
+                alert("Erro ao atualizar o estado do pedido."); 
+            }
+        }
+
+        window.apagarPedido = async function(id) {
+            if(confirm("Tem a certeza que deseja apagar este registo?")) {
+                try { 
+                    await deleteDoc(doc(db, "pedidos", id)); 
+                    carregarPedidos(); 
+                } catch (e) { 
+                    console.error("Erro ao apagar: ", e); 
+                    alert("Erro ao remover o registo."); 
+                }
+            }
+        }
+
         carregarPedidos();
     </script>
 </body>
