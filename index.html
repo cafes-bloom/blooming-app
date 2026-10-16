@@ -622,14 +622,14 @@
             divLista.innerHTML = "";
             
             let pedidosProcessados = cachePedidos.filter(p => {
-                // Um pedido só é considerado 'concluído/arquivado' se estiver ENTREGUE e PAGO
-                const estaConcluido = p.entregue === true && p.pago === true;
+                // O pedido só é considerado 'concluído/arquivado' quando Produzido, Entregue e Pago estão TRUE
+                const estaConcluido = p.produzido === true && p.entregue === true && p.pago === true;
 
                 if (filtroAtual === 'arquivados') {
                     return estaConcluido;
                 }
                 
-                // Na lista ativa, esconde apenas o que já foi 100% concluído
+                // Na lista ativa, esconde apenas os 100% concluídos
                 if (estaConcluido) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
@@ -742,6 +742,27 @@
         }
 
         window.alternarStatus = async function(id, campo, novoValor) {
+            const pedido = cachePedidos.find(p => p.id === id);
+            if (!pedido) return;
+
+            // Simula o estado do pedido após a alteração pretendida
+            const estadoFuturo = {
+                produzido: campo === 'produzido' ? novoValor : (pedido.produzido || false),
+                entregue: campo === 'entregue' ? novoValor : (pedido.entregue || false),
+                pago: campo === 'pago' ? novoValor : (pedido.pago || false)
+            };
+
+            const ficaraConcluido = estadoFuturo.produzido && estadoFuturo.entregue && estadoFuturo.pago;
+            const jaEstavaConcluido = pedido.produzido && pedido.entregue && pedido.pago;
+
+            // Se esta ação for a responsável por fechar a 3ª etapa, pede confirmação
+            if (ficaraConcluido && !jaEstavaConcluido) {
+                const confirmou = confirm("Todas as 3 etapas (Produção, Entrega e Pagamento) foram concluídas. Confirma que deseja arquivar este pedido?");
+                if (!confirmou) {
+                    return; // Cancela a operação e não altera o status
+                }
+            }
+
             try { 
                 const docRef = doc(db, "pedidos", id); 
                 let dadosAtualizados = {}; 
