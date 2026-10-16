@@ -15,7 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #ECEADD; 
             color: #1A1613; 
-            padding: 10px; 
+            padding: 12px; 
             margin: 0; 
         }
         .container { 
@@ -28,11 +28,10 @@
             border-top: 6px solid #844C29; 
         }
         
-        /* Cabeçalho Ajustado para Tablets e Telas Largas */
+        /* Cabeçalho Fixo Lado a Lado */
         .cabecalho-fluido {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             gap: 15px;
             padding-bottom: 15px;
             margin-bottom: 20px;
@@ -40,16 +39,14 @@
             border-image: linear-gradient(to right, #844C29, #D9D8CF, transparent) 1;
         }
         .logo-topo img {
-            max-width: 85px;
+            width: 75px;
             height: auto;
             display: block;
-        }
-        .titulo-topo {
-            text-align: left;
+            flex-shrink: 0;
         }
         .titulo-topo h2 {
             color: #1E1410;
-            font-size: 17px;
+            font-size: 18px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin: 0;
@@ -62,13 +59,6 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: bold;
-        }
-
-        @media (max-width: 450px) {
-            .cabecalho-fluido { flex-direction: column; text-align: center; }
-            .titulo-topo { text-align: center; }
-            .titulo-topo h2 { font-size: 15px; }
-            .logo-topo img { max-width: 75px; margin: 0 auto; }
         }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -87,7 +77,7 @@
         .btn-salvar:active { background-color: #844C29; }
         
         /* Controlo de Filtros */
-        .painel-controle { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .painel-controle { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
         
         .filtros-container { 
             display: flex; 
@@ -111,7 +101,6 @@
             white-space: nowrap; 
             text-transform: uppercase; 
             flex-shrink: 0; 
-            width: auto !important; 
         }
         .btn-filtro.ativo { background-color: #844C29; color: #FFFFFF; }
         
@@ -146,17 +135,13 @@
         .badge-nao { background-color: #f8d7da; color: #721c24; }
         .badge-sim { background-color: #d4edda; color: #155724; }
         
-        /* Botões de Ação em Grelha Uniforme */
-        .acoes-card { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn-acao { padding: 8px 12px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; flex-grow: 1; min-width: 75px; text-align: center; }
+        /* Botões de Ação Lado a Lado de Forma Uniforme */
+        .acoes-card { display: flex; gap: 8px; align-items: center; }
+        .btn-acao { padding: 9px 6px; font-size: 12px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase; text-align: center; white-space: nowrap; flex: 1; }
         .btn-producao { background: #ffc107; color: #000; }
         .btn-entrega { background: #17a2b8; color: #fff; }
         .btn-pagamento { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: #fff; min-width: 45px; flex-grow: 0; }
-
-        @media (max-width: 380px) {
-            .acoes-card { display: grid; grid-template-columns: repeat(2, 1fr); }
-        }
+        .btn-excluir { background: #dc3545; color: #fff; flex: 0 0 45px; }
         
         #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
         h3 { margin-top: 20px; font-size: 15px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -373,16 +358,4 @@
         window.apagarPedido = async function(id) {
             if(confirm("Tem a certeza que deseja apagar este registo?")) {
                 try { 
-                    await deleteDoc(doc(db, "pedidos", id)); 
-                    carregarPedidos(); 
-                } catch (e) { 
-                    console.error("Erro ao apagar: ", e); 
-                    alert("Erro ao remover o registo."); 
-                }
-            }
-        }
-
-        carregarPedidos();
-    </script>
-</body>
-</html>
+                    
