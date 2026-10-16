@@ -322,6 +322,24 @@
         .pedido-detalhes strong {
             color: var(--primary);
         }
+
+        /* Botão Editar Data */
+        .btn-editar-data {
+            background: #EFECE6;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 8px;
+            color: var(--primary);
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-editar-data:hover {
+            background: #E5E3D8;
+        }
         
         .status-container { 
             display: flex; 
@@ -373,6 +391,26 @@
             margin-top: 10px; 
             font-size: 12px;
             display: none; 
+        }
+
+        /* Modal Flutuante para Edição de Data */
+        .modal-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: rgba(30, 20, 16, 0.6); 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--surface); 
+            padding: 24px; 
+            border-radius: 12px; 
+            width: 90%; 
+            max-width: 320px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -435,6 +473,19 @@
         </div>
 
         <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">A carregar pedidos...</p></div>
+    </div>
+
+    <!-- Modal Flutuante para Edição Rápida da Data -->
+    <div id="modalEditarData" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 16px;">Definir Data Oficial</h3>
+            <label for="inputNovaData">Nova Data de Entrega:</label>
+            <input type="date" id="inputNovaData" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-salvar" onclick="salvarNovaData()" style="margin-top: 0; background-color: var(--accent);">Guardar</button>
+                <button class="btn-salvar" onclick="fecharModalData()" style="margin-top: 0; background-color: #9CA3AF;">Cancelar</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -527,14 +578,46 @@
             desenharLista(); 
         }
 
+        // --- Lógica do Modal de Edição de Data ---
+        let pedidoEditandoId = null;
+        
+        window.abrirModalData = function(id, dataAtual) {
+            pedidoEditandoId = id;
+            document.getElementById("inputNovaData").value = dataAtual;
+            document.getElementById("modalEditarData").style.display = "flex";
+        }
+
+        window.fecharModalData = function() {
+            document.getElementById("modalEditarData").style.display = "none";
+            pedidoEditandoId = null;
+        }
+
+        window.salvarNovaData = async function() {
+            const novaData = document.getElementById("inputNovaData").value;
+            if (!novaData) {
+                alert("Por favor, selecione uma data válida.");
+                return;
+            }
+            try {
+                const docRef = doc(db, "pedidos", pedidoEditandoId);
+                await updateDoc(docRef, {
+                    dataEntrega: novaData,
+                    previsaoData: false // Quando edita a data, deixa de ser "previsão" e passa a ser oficial
+                });
+                fecharModalData();
+                carregarPedidos(); // Recarrega a lista para ordenar e mostrar a nova data
+            } catch (e) {
+                console.error("Erro ao atualizar a data: ", e);
+                alert("Erro ao atualizar a data do pedido.");
+            }
+        }
+        // ------------------------------------------
+
         function desenharLista() {
             divLista.innerHTML = "";
             
             let pedidosProcessados = cachePedidos.filter(p => {
-                if (filtroAtual === 'arquivados') {
-                    return p.pago === true;
-                }
-                
+                if (filtroAtual === 'arquivados') return p.pago === true;
                 if (p.pago) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
@@ -565,11 +648,14 @@
                 
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
-                // Verifica se é uma data prevista e muda a forma como é exibido
+                // Formatação da Data com botão de editar
                 let infoData = `<strong>Entrega:</strong> ${formatarData(p.dataEntrega)}`;
                 if (p.previsaoData) {
                     infoData = `<span style="color: #D97706; font-weight: 700;">Previsão: ${formatarData(p.dataEntrega)} ⏳ (A combinar)</span>`;
                 }
+                
+                // Adiciona o botão de lápis para editar a data
+                infoData += ` <button class="btn-editar-data" onclick="abrirModalData('${id}', '${p.dataEntrega || ''}')" title="Alterar Data Oficial">✏️ Editar</button>`;
 
                 divLista.innerHTML += `
                     <div class="${classeEntregue}">
@@ -579,7 +665,7 @@
                         </div>
                         <div class="pedido-detalhes">
                             <strong>Descrição:</strong> ${p.descricao} <br>
-                            ${infoData}
+                            <div style="margin-top: 6px;">${infoData}</div>
                         </div>
                         <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
                         <div class="acoes-card">
@@ -597,7 +683,7 @@
             let cliente = document.getElementById("cliente").value;
             let descricao = document.getElementById("descricao").value;
             let dataEntrega = document.getElementById("dataEntrega").value;
-            let isPrevisao = document.getElementById("previsaoData").checked; // Pega o valor do Checkbox
+            let isPrevisao = document.getElementById("previsaoData").checked; 
             
             if(cliente === "" || descricao === "") { 
                 alert("Por favor, preencha o nome do cliente e a descrição do pedido!"); 
@@ -611,7 +697,7 @@
                     descricao: descricao, 
                     dataPedido: hoje, 
                     dataEntrega: dataEntrega,
-                    previsaoData: isPrevisao, // Salva no banco de dados
+                    previsaoData: isPrevisao, 
                     pagamentoForma: "Não informada", 
                     produzido: false, 
                     entregue: false, 
@@ -619,12 +705,11 @@
                     criadoEm: new Date().toISOString() 
                 });
                 
-                // Limpa os campos
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
-                document.getElementById("previsaoData").checked = false; // Reseta o checkbox
+                document.getElementById("previsaoData").checked = false; 
                 
                 const msg = document.getElementById("mensagem"); 
                 msg.style.display = "block"; 
