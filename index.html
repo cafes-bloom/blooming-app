@@ -4,49 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blooming - Controlo de Produção</title>
-    <link rel="manifest" href="manifest.json">
-    <!-- LINHAS PARA TRANSFORMAR EM APLICAÇÃO NATIVA -->
+    
+    <!-- Configurações para PWA / Ecrã Inteiro -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#D97A96"> 
+    <meta name="theme-color" content="#1E1410"> 
+    <link rel="manifest" href="manifest.json">
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; padding: 15px; margin: 0; }
-        .container { max-width: 100%; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; font-size: 22px; }
-        input, button { width: 100%; padding: 14px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
-        button { background-color: #D97A96; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; }
-        button:active { background-color: #c0637d; }
-        .pedido { background: #fdfdfd; padding: 15px; margin-top: 15px; border-left: 5px solid #D97A96; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 4px; }
-        .pedido strong { font-size: 18px; color: #333; }
-        .pedido span { color: #666; margin-top: 5px; margin-bottom: 10px; font-size: 15px; }
-        .btn-concluir { background: #28a745; margin-top: 5px; padding: 10px; font-size: 14px; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-concluir:active { background: #218838; }
-        #mensagem { color: #28a745; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
-        h3 { margin-top: 25px; border-bottom: 2px solid #eee; padding-bottom: 5px; font-size: 18px; color: #444; }
+        /* Padrão Visual Blooming (Inspirado na identidade de cafés especiais) */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #ECEADD; 
+            color: #1A1613;
+            padding: 15px; 
+            margin: 0; 
+        }
+        .container { 
+            max-width: 600px; 
+            margin: auto; 
+            background: #FFFFFF; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(30, 20, 16, 0.08); 
+            border-top: 5px solid #844C29;
+        }
+        h2 { 
+            text-align: center; 
+            color: #1E1410; 
+            font-size: 20px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #844C29;
+            display: block;
+            margin-top: 12px;
+            text-transform: uppercase;
+        }
+        input, button { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 6px; 
+            box-sizing: border-box; 
+            border: 1px solid #D9D8CF; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            background-color: #FAFAF7;
+        }
+        input:focus {
+            outline: none;
+            border-color: #844C29;
+            background-color: #FFF;
+        }
+        button { 
+            background-color: #1E1410; 
+            color: #ECEADD; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+        button:active { 
+            background-color: #844C29; 
+        }
+        .pedido { 
+            background: #FAFAF7; 
+            padding: 15px; 
+            margin-top: 15px; 
+            border-left: 4px solid #844C29; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+            border-radius: 6px; 
+            border-top: 1px solid #EFEEE9;
+            border-right: 1px solid #EFEEE9;
+            border-bottom: 1px solid #EFEEE9;
+        }
+        .pedido strong { font-size: 17px; color: #1E1410; }
+        .pedido span { color: #555; margin-top: 4px; margin-bottom: 12px; font-size: 15px; }
+        .btn-concluir { 
+            background: #844C29; 
+            margin-top: 0; 
+            padding: 10px; 
+            font-size: 14px; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            text-transform: uppercase;
+        }
+        .btn-concluir:active { background: #63381e; }
+        #mensagem { color: #844C29; font-weight: bold; text-align: center; margin-top: 15px; display: none; }
+        h3 { margin-top: 30px; border-bottom: 2px solid #ECEADD; padding-bottom: 8px; font-size: 16px; color: #1E1410; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🌸 Blooming - Novo Pedido</h2>
+        <h2>🌸 Blooming — Controlo de Produção</h2>
         
-        <input type="text" id="cliente" placeholder="Nome do Cliente (Ex: Maria Silva)">
-        <input type="text" id="produto" placeholder="Produto (Ex: 50 Caixas Drip Coffee)">
+        <label for="cliente">Cliente / Cafeteria</label>
+        <input type="text" id="cliente" placeholder="Ex: Café Central">
+        
+        <label for="produto">Especificação do Produto</label>
+        <input type="text" id="produto" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí">
+        
         <button onclick="salvarPedido()">Guardar Pedido</button>
         <p id="mensagem">Pedido guardado com sucesso!</p>
 
         <h3>Pedidos em Produção:</h3>
         <div id="listaPedidos">
-            <p style="color: #888; text-align: center;">A carregar pedidos...</p>
+            <p style="color: #777; text-align: center;">A carregar pedidos...</p>
         </div>
     </div>
 
-    <!-- Motores do Firebase e a sua chave -->
+    <!-- Motores do Firebase e a chave -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // A SUA CHAVE EXATA ESTÁ AQUI
         const firebaseConfig = {
             apiKey: "AIzaSyDzDOvbshvUu5T4QD0OJMuYU26lhNffaW8",
             authDomain: "blooming-app-6a7da.firebaseapp.com",
@@ -62,9 +144,8 @@
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
 
-        // Função para LER os pedidos
         async function carregarPedidos() {
-            divLista.innerHTML = "<p style='color: #888; text-align: center;'>A carregar...</p>";
+            divLista.innerHTML = "<p style='color: #777; text-align: center;'>A carregar...</p>";
             
             try {
                 const q = query(pedidosRef, orderBy("data", "desc"));
@@ -73,7 +154,7 @@
                 divLista.innerHTML = ""; 
 
                 if (querySnapshot.empty) {
-                    divLista.innerHTML = "<p style='color: #888; text-align: center;'>Nenhum pedido em produção no momento.</p>";
+                    divLista.innerHTML = "<p style='color: #777; text-align: center;'>Nenhum pedido em produção no momento.</p>";
                     return;
                 }
 
@@ -95,7 +176,6 @@
             }
         }
 
-        // Função para GUARDAR
         window.salvarPedido = async function() {
             let cliente = document.getElementById("cliente").value;
             let produto = document.getElementById("produto").value;
@@ -123,11 +203,10 @@
 
             } catch (e) {
                 console.error("Erro ao guardar: ", e);
-                alert("Erro ao guardar o pedido. Verifique o console.");
+                alert("Erro ao guardar o pedido.");
             }
         }
 
-        // Função para CONCLUIR (apagar)
         window.concluirPedido = async function(id) {
             if(confirm("Tem a certeza que quer concluir e remover este pedido?")) {
                 try {
