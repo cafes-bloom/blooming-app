@@ -323,6 +323,11 @@
             color: var(--primary);
         }
 
+        .valor-destaque {
+            color: #15803D; /* Verde escuro para o valor financeiro */
+            font-weight: 700;
+        }
+
         /* Botão Editar Data */
         .btn-editar-data {
             background: #EFECE6;
@@ -442,6 +447,10 @@
                 <div>
                     <label for="descricao">Descrição do Pedido</label>
                     <textarea id="descricao" rows="1" placeholder="Ex: 50 Caixas Drip Coffee - Catuaí Amarelo"></textarea>
+                </div>
+                <div>
+                    <label for="preco">Valor do Pedido (Opcional)</label>
+                    <input type="text" id="preco" placeholder="Ex: 150,00">
                 </div>
                 <div>
                     <label for="dataEntrega">Data de Entrega</label>
@@ -602,10 +611,10 @@
                 const docRef = doc(db, "pedidos", pedidoEditandoId);
                 await updateDoc(docRef, {
                     dataEntrega: novaData,
-                    previsaoData: false // Quando edita a data, deixa de ser "previsão" e passa a ser oficial
+                    previsaoData: false 
                 });
                 fecharModalData();
-                carregarPedidos(); // Recarrega a lista para ordenar e mostrar a nova data
+                carregarPedidos(); 
             } catch (e) {
                 console.error("Erro ao atualizar a data: ", e);
                 alert("Erro ao atualizar a data do pedido.");
@@ -648,13 +657,15 @@
                 
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
+                // Formatação do Preço
+                let infoPreco = p.preco ? `<strong>Valor:</strong> <span class="valor-destaque">${p.preco}</span> <br>` : '';
+
                 // Formatação da Data com botão de editar
                 let infoData = `<strong>Entrega:</strong> ${formatarData(p.dataEntrega)}`;
                 if (p.previsaoData) {
                     infoData = `<span style="color: #D97706; font-weight: 700;">Previsão: ${formatarData(p.dataEntrega)} ⏳ (A combinar)</span>`;
                 }
                 
-                // Adiciona o botão de lápis para editar a data
                 infoData += ` <button class="btn-editar-data" onclick="abrirModalData('${id}', '${p.dataEntrega || ''}')" title="Alterar Data Oficial">✏️ Editar</button>`;
 
                 divLista.innerHTML += `
@@ -665,6 +676,7 @@
                         </div>
                         <div class="pedido-detalhes">
                             <strong>Descrição:</strong> ${p.descricao} <br>
+                            ${infoPreco}
                             <div style="margin-top: 6px;">${infoData}</div>
                         </div>
                         <div class="status-container">${badgeProd}${badgeEnt}${badgePag}</div>
@@ -682,6 +694,7 @@
         window.salvarPedido = async function() {
             let cliente = document.getElementById("cliente").value;
             let descricao = document.getElementById("descricao").value;
+            let preco = document.getElementById("preco").value;
             let dataEntrega = document.getElementById("dataEntrega").value;
             let isPrevisao = document.getElementById("previsaoData").checked; 
             
@@ -695,6 +708,7 @@
                 await addDoc(pedidosRef, { 
                     cliente: cliente, 
                     descricao: descricao, 
+                    preco: preco,
                     dataPedido: hoje, 
                     dataEntrega: dataEntrega,
                     previsaoData: isPrevisao, 
@@ -707,6 +721,7 @@
                 
                 document.getElementById("cliente").value = ""; 
                 document.getElementById("descricao").value = ""; 
+                document.getElementById("preco").value = "";
                 document.getElementById("descricao").style.height = "auto";
                 document.getElementById("dataEntrega").value = "";
                 document.getElementById("previsaoData").checked = false; 
