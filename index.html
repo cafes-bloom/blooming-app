@@ -148,28 +148,41 @@
             letter-spacing: 0.5px; 
         }
 
-        /* Painel de Controlo apenas com Ordenação (Sem Filtros) */
+        /* Barra de Filtros limpa e sem caixa de fundo */
         .painel-controle { 
             display: flex; 
-            justify-content: flex-end; 
             margin-bottom: 15px; 
         }
 
-        .ordenacao-select { 
-            padding: 9px 14px; 
-            border-radius: 8px; 
-            background-color: #EFECE6; 
-            color: var(--primary); 
-            border: 1px solid var(--border); 
-            font-size: 11px; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            cursor: pointer; 
+        .filtros-container { 
+            display: flex; 
+            gap: 6px; 
+            overflow-x: auto; 
+            padding-bottom: 4px; 
             width: 100%; 
+            scrollbar-width: none; 
+        }
+        .filtros-container::-webkit-scrollbar { 
+            display: none; 
         }
 
-        @media (min-width: 650px) {
-            .ordenacao-select { width: auto; }
+        .btn-filtro { 
+            background-color: #EFECE6; 
+            color: var(--primary); 
+            border: none; 
+            padding: 7px 12px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            text-transform: uppercase; 
+            transition: all 0.2s;
+        }
+        .btn-filtro.ativo { 
+            background-color: var(--accent); 
+            color: #FFFFFF; 
+            box-shadow: 0 2px 6px rgba(132, 76, 41, 0.25);
         }
 
         /* Cartões de Pedido */
@@ -309,12 +322,14 @@
             <h3>Lista de Pedidos Ativos</h3>
         </div>
         
+        <!-- Filtros Rápidos (Pílulas) -->
         <div class="painel-controle">
-            <select id="ordenacao" class="ordenacao-select" onchange="mudarOrdenacao()">
-                <option value="entrega-asc">Entrega: Próximas (Padrão)</option>
-                <option value="criado-desc">Mais Recentes</option>
-                <option value="entrega-desc">Entrega: Distantes</option>
-            </select>
+            <div class="filtros-container">
+                <button class="btn-filtro ativo" onclick="filtrar('todos', this)">Todos</button>
+                <button class="btn-filtro" onclick="filtrar('producao-nao', this)">Por Produzir</button>
+                <button class="btn-filtro" onclick="filtrar('entrega-nao', this)">Por Entregar</button>
+                <button class="btn-filtro" onclick="filtrar('pago-nao', this)">Por Pagar</button>
+            </div>
         </div>
 
         <div id="listaPedidos"><p style="color: var(--text-muted); text-align: center; margin-top: 25px; font-size: 13px;">A carregar pedidos...</p></div>
@@ -331,6 +346,7 @@
         const pedidosRef = collection(db, "pedidos");
         const divLista = document.getElementById("listaPedidos");
         let cachePedidos = []; 
+        let filtroAtual = 'todos';
 
         const textareaDescricao = document.getElementById("descricao");
         textareaDescricao.addEventListener("input", function() {
@@ -362,37 +378,37 @@
             }
         }
 
-        window.mudarOrdenacao = function() { 
+        window.filtrar = function(tipo, elementoBotao) { 
+            filtroAtual = tipo; 
+            document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('ativo')); 
+            elementoBotao.classList.add('ativo'); 
             desenharLista(); 
         }
 
         function desenharLista() {
             divLista.innerHTML = "";
             
-            // FILTRO AUTOMÁTICO: O que já foi pago sai da tela (arquivado)
-            let pedidosProcessados = cachePedidos.filter(p => !p.pago);
+            // 1. FILTRO AUTOMÁTICO: O que já foi pago sai da tela (arquivado)
+            let pedidosProcessados = cachePedidos.filter(p => {
+                if (p.pago) return false; 
+                
+                if (filtroAtual === 'producao-nao') return !p.produzido;
+                if (filtroAtual === 'entrega-nao') return !p.entregue;
+                if (filtroAtual === 'pago-nao') return !p.pago;
+                return true;
+            });
             
-            const criterioOrdem = document.getElementById("ordenacao").value;
-            
+            // 2. ORDENAÇÃO AUTOMÁTICA INTELIGENTE
             pedidosProcessados.sort((a, b) => {
-                // REGRA: O que já foi entregue desce automaticamente para o final da lista
+                // REGRA A: O que já foi entregue desce automaticamente para o final da lista
                 if (a.entregue !== b.entregue) {
                     return a.entregue ? 1 : -1; 
                 }
 
-                // ORDENAÇÃO SELECIONADA
-                if (criterioOrdem === 'criado-desc') { 
-                    return new Date(b.criadoEm || 0) - new Date(a.criadoEm || 0); 
-                } else if (criterioOrdem === 'entrega-asc') { 
-                    if (!a.dataEntrega) return 1; 
-                    if (!b.dataEntrega) return -1; 
-                    return new Date(a.dataEntrega) - new Date(b.dataEntrega); 
-                } else if (criterioOrdem === 'entrega-desc') { 
-                    if (!a.dataEntrega) return 1; 
-                    if (!b.dataEntrega) return -1; 
-                    return new Date(b.dataEntrega) - new Date(a.dataEntrega); 
-                }
-                return 0;
+                // REGRA B: Ordena automaticamente por Data de Entrega (mais próxima primeiro)
+                if (!a.dataEntrega) return 1; 
+                if (!b.dataEntrega) return -1; 
+                return new Date(a.dataEntrega) - new Date(b.dataEntrega);
             });
 
             if (pedidosProcessados.length === 0) { 
