@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blooming Club - Gestão de Pedidos e Produção</title>
     
-    <!-- Bloqueia o rastreamento por motores de busca (Google, etc.) -->
+    <!-- Bloqueia o rastreamento por motores de busca -->
     <meta name="robots" content="noindex, nofollow">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,7 +44,6 @@
             border-top: 5px solid var(--accent); 
         }
 
-        /* Topo Lado a Lado */
         .header-app { 
             display: flex;
             align-items: center;
@@ -178,7 +177,6 @@
             min-height: 44px;
         }
 
-        /* Checkbox da Previsão */
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -327,11 +325,10 @@
         }
 
         .valor-destaque {
-            color: #15803D; /* Verde escuro para o valor financeiro */
+            color: #15803D;
             font-weight: 700;
         }
 
-        /* Botão Editar Data */
         .btn-editar-data {
             background: #EFECE6;
             border: 1px solid var(--border);
@@ -401,7 +398,6 @@
             display: none; 
         }
 
-        /* Modal Flutuante para Edição de Data */
         .modal-overlay {
             display: none; 
             position: fixed; 
@@ -458,7 +454,6 @@
                 <div>
                     <label for="dataEntrega">Data de Entrega</label>
                     <input type="date" id="dataEntrega">
-                    <!-- Checkbox de Previsão -->
                     <div class="checkbox-container">
                         <input type="checkbox" id="previsaoData">
                         <label for="previsaoData">Esta data é apenas uma previsão (A combinar)</label>
@@ -547,7 +542,7 @@
                 filtroAtual = 'arquivados';
                 btn.innerHTML = "← Voltar Ativos";
                 btn.classList.add('ativo-arq');
-                titulo.innerText = "Pedidos Arquivados (Pagos)";
+                titulo.innerText = "Pedidos Arquivados (Concluídos)";
                 painelFiltros.style.display = "none"; 
             }
             desenharLista();
@@ -590,7 +585,6 @@
             desenharLista(); 
         }
 
-        // --- Lógica do Modal de Edição de Data ---
         let pedidoEditandoId = null;
         
         window.abrirModalData = function(id, dataAtual) {
@@ -623,14 +617,20 @@
                 alert("Erro ao atualizar a data do pedido.");
             }
         }
-        // ------------------------------------------
 
         function desenharLista() {
             divLista.innerHTML = "";
             
             let pedidosProcessados = cachePedidos.filter(p => {
-                if (filtroAtual === 'arquivados') return p.pago === true;
-                if (p.pago) return false; 
+                // Um pedido só é considerado 'concluído/arquivado' se estiver ENTREGUE e PAGO
+                const estaConcluido = p.entregue === true && p.pago === true;
+
+                if (filtroAtual === 'arquivados') {
+                    return estaConcluido;
+                }
+                
+                // Na lista ativa, esconde apenas o que já foi 100% concluído
+                if (estaConcluido) return false; 
                 
                 if (filtroAtual === 'producao-nao') return !p.produzido;
                 if (filtroAtual === 'entrega-nao') return !p.entregue;
@@ -660,10 +660,8 @@
                 
                 const classeEntregue = p.entregue ? "pedido-card entregue" : "pedido-card";
                 
-                // Formatação do Preço
                 let infoPreco = p.preco ? `<strong>Valor:</strong> <span class="valor-destaque">${p.preco}</span> <br>` : '';
 
-                // Formatação da Data com botão de editar
                 let infoData = `<strong>Entrega:</strong> ${formatarData(p.dataEntrega)}`;
                 if (p.previsaoData) {
                     infoData = `<span style="color: #D97706; font-weight: 700;">Previsão: ${formatarData(p.dataEntrega)} ⏳ (A combinar)</span>`;
@@ -686,7 +684,7 @@
                         <div class="acoes-card">
                             <button class="btn-acao btn-producao" onclick="alternarStatus('${id}', 'produzido', ${!p.produzido})">⚙ Prod</button>
                             <button class="btn-acao btn-entrega" onclick="alternarStatus('${id}', 'entregue', ${!p.entregue})">🚚 Entr</button>
-                            <button class="btn-acao btn-pagamento" onclick="confirmarPagamento('${id}', ${!p.pago})">💰 Pag</button>
+                            <button class="btn-acao btn-pagamento" onclick="alternarStatus('${id}', 'pago', ${!p.pago})">💰 Pag</button>
                             <button class="btn-acao btn-excluir" onclick="apagarPedido('${id}')">🗑 Apagar</button>
                         </div>
                     </div>
@@ -753,16 +751,6 @@
             } catch (e) { 
                 console.error("Erro ao atualizar status: ", e); 
                 alert("Erro ao atualizar o estado do pedido."); 
-            }
-        }
-
-        window.confirmarPagamento = async function(id, novoValor) {
-            if (novoValor) {
-                if (confirm("Confirma que este pedido foi pago? Ele será arquivado e sairá da tela ativa.")) {
-                    window.alternarStatus(id, 'pago', true);
-                }
-            } else {
-                window.alternarStatus(id, 'pago', false);
             }
         }
 
